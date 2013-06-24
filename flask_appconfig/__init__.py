@@ -154,7 +154,6 @@ class HerokuConfig(AppConfig):
            app.config['MAIL_USERNAME'] = app.config['SMTP_LOGIN']
            app.config['MAIL_PASSWORD'] = app.config['SMTP_PASSWORD']
 
-        # fixme: redis
         # for backwards compatiblity, redis:
         if 'REDIS_URL' in app.config:
             url = urlparse(app.config['REDIS_URL'])
