@@ -93,7 +93,7 @@ class HerokuConfig(AppConfig):
 
         var_map = {
             # SQL-Alchemy
-            'DATABASE_URL': 'SQLALCHEMY_DATABASE_URL',
+            'DATABASE_URL': 'SQLALCHEMY_DATABASE_URI',
 
             # newer-style
             'HEROKU_POSTGRESQL_ORANGE_URL': 'SQLALCHEMY_DATABASE_URL',
