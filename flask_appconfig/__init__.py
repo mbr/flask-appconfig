@@ -88,8 +88,8 @@ class AppConfig(object):
 
 
 class HerokuConfig(AppConfig):
-    def init_app(self, *args, **kwargs):
-        super(HerokuConfig, self).__init__(*args, **kwargs)
+    def init_app(self, app, *args, **kwargs):
+        super(HerokuConfig, self).init_app(app, *args, **kwargs)
 
         var_map = {
             # SQL-Alchemy
