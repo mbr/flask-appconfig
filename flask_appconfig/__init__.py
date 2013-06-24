@@ -9,7 +9,12 @@ class AppConfig(object):
             self.init_app(app, *args, **kwargs)
         return self
 
-    def init_app(self, app):
+    def init_app(self, app, configfile=None):
+        # load supplied configuration file
+        if configfile:
+            app.config.from_pyfile(config)
+
+        # register extension
         app.extensions = getattr(app, 'extensions', {})
         app.extensions['appconfig'] = self
 
