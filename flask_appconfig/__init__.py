@@ -139,7 +139,7 @@ class HerokuConfig(AppConfig):
             app.config['SMTP_PORT'] = app.config['MAILGUN_SMTP_PORT']
             app.config['SMTP_LOGIN'] = app.config['MAILGUN_SMTP_LOGIN']
             app.config['SMTP_PASSWORD'] = app.config['MAILGUN_SMTP_PASSWORD']
-            app.config['SMTP_TLS'] = True
+            app.config['SMTP_USE_TLS'] = True
         elif 'SENDGRID_USERNAME' in app.config:
             app.config['SMTP_SERVER'] = 'smtp.sendgrid.net'
             app.config['SMTP_PORT'] = 25
