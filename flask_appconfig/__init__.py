@@ -96,7 +96,7 @@ class HerokuConfig(AppConfig):
             'DATABASE_URL': 'SQLALCHEMY_DATABASE_URI',
 
             # newer-style
-            'HEROKU_POSTGRESQL_ORANGE_URL': 'SQLALCHEMY_DATABASE_URL',
+            'HEROKU_POSTGRESQL_ORANGE_URL': 'SQLALCHEMY_DATABASE_URI',
 
             # Celery w/ RabbitMQ
             'BROKER_URL': 'RABBITMQ_URL',
