@@ -78,7 +78,7 @@ control.
 No code necessary for most deployments using the factory-method pattern
 ***********************************************************************
 
-When deploying with gunicorn, passing 'myapp:create_app()' suffices to create
+When deploying with gunicorn, passing ``myapp:create_app()`` suffices to create
 an app instance, no boilerplate code to create the WSGI app should be necessary.
 
 Multiple instances
