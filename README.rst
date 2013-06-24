@@ -12,14 +12,14 @@ Allows you to configure an application using pre-set methods::
 
 The application returned by ``create_app`` will, in order:
 
-  1. Load default settings from a module called ``myapp.default_settings``, if
-     it exists. (method described in
-     <http://flask.pocoo.org/docs/config/#configuring-from-files>)
-  2. Load settings from a configuration file whose name is given in the
-     environment variable ``MYAPP_SETTINGS`` (see link from 1.).
-  3. Load json or string values directly from environment variables that start
-     with a prefix of ``FLASK_``, i.e. setting ``FLASK_SQLALCHEMY_ECHO=true``
-     will cause the setting of ``SQLALCHEMY_ECHO`` to be ``True``.
+1. Load default settings from a module called ``myapp.default_settings``, if it
+   exists. (method described in
+   <http://flask.pocoo.org/docs/config/#configuring-from-files>)
+2. Load settings from a configuration file whose name is given in the
+   environment variable ``MYAPP_SETTINGS`` (see link from 1.).
+3. Load json or string values directly from environment variables that start
+   with a prefix of ``FLASK_``, i.e. setting ``FLASK_SQLALCHEMY_ECHO=true``
+   will cause the setting of ``SQLALCHEMY_ECHO`` to be ``True``.
 
 Any of these behaviors can be altered or disabled by passing the appropriate
 options to the constructor or ``init_app()``.
@@ -52,11 +52,11 @@ less-than-optimal ones are chosen in a hurry.
 
 This extension aims to do three things:
 
-  1. Set a "standard" of doing configuration that is flexible and in-line
-     with the official docs and (what I consider) good practices.
-  2. Make it as convenient as possible to provide these configuration methods
-     in an application.
-  3. Auto-configure on Heroku as much as possible without sacrificing 1. and 2.
+1. Set a "standard" of doing configuration that is flexible and in-line with
+   the official docs and (what I consider) good practices.
+2. Make it as convenient as possible to provide these configuration methods in
+   an application.
+3. Auto-configure on Heroku as much as possible without sacrificing 1. and 2.
 
 Providing defaults
 ******************
