@@ -61,13 +61,19 @@ class AppConfig(object):
 
         # if it's a list, convert to dict
         if isinstance(envvars, list):
-            envvars = { k:k for k in envvars }
+            envvars = { k:None for k in envvars }
 
         if not envvars:
             envvars = { k:k[len(prefix):] for k in environ.iterkeys()
                          if k.startswith(prefix) }
 
         for env_name, name in envvars.iteritems():
+            if name == None:
+                name = env_name
+
+            if not env_name in envvars:
+                continue
+
             if as_json:
                 try:
                     conf[name] = json.loads(environ[env_name])
