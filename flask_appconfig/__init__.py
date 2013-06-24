@@ -4,9 +4,9 @@ import json
 import os
 
 class AppConfig(object):
-    def __init__(self, app=None):
+    def __init__(self, app=None, *args, **kwargs):
         if app:
-            self.init_app(app)
+            self.init_app(app, *args, **kwargs)
         return self
 
     def init_app(self, app):
