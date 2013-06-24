@@ -9,10 +9,17 @@ class AppConfig(object):
             self.init_app(app, *args, **kwargs)
         return self
 
-    def init_app(self, app, configfile=None):
+    def init_app(self, app, configfile=None, envvar=True):
         # load supplied configuration file
         if configfile:
             app.config.from_pyfile(config)
+
+        # load configuration file from environment
+        if envvar == True:
+            envvar = app.name.upper() + '_SETTINGS'
+
+        if envvar and envvar in os.environ:
+            app.config.from_envvar(envvar)
 
         # register extension
         app.extensions = getattr(app, 'extensions', {})
