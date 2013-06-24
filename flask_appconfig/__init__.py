@@ -31,19 +31,19 @@ class AppConfig(object):
         :param as_json: If False, values will not be parsed as JSON first.
         """
 
-    # if it's a list, convert to dict
-    if isinstance(envvars, list):
-        envvars = { k:k for k in envvars }
+        # if it's a list, convert to dict
+        if isinstance(envvars, list):
+            envvars = { k:k for k in envvars }
 
-    if not envvars:
-        envvars = { k:k[len(prefix):] for k in environ.iterkeys()
-                     if k.startswith(prefix) }
+        if not envvars:
+            envvars = { k:k[len(prefix):] for k in environ.iterkeys()
+                         if k.startswith(prefix) }
 
-    for env_name, name in envvars.iteritems():
-        if as_json:
-            try:
-                conf[name] = json.loads(environ[env_name])
-            except ValueError:
+        for env_name, name in envvars.iteritems():
+            if as_json:
+                try:
+                    conf[name] = json.loads(environ[env_name])
+                except ValueError:
+                    conf[name] = environ[env_name]
+            else:
                 conf[name] = environ[env_name]
-        else:
-            conf[name] = environ[env_name]
