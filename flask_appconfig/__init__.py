@@ -38,14 +38,14 @@ class AppConfig(object):
 
         # load environment variables
         if from_envvars:
-            self.from_envvars(as_json=('json' == from_envvars),
+            self.from_envvars(app.config, as_json=('json' == from_envvars),
                               prefix=from_envvars_prefix)
 
         # register extension
         app.extensions = getattr(app, 'extensions', {})
         app.extensions['appconfig'] = self
 
-    def from_envvars(self, envvars=None,
+    def from_envvars(self, conf, envvars=None,
                            prefix=DEFAULT_ENV_PREFIX,
                            as_json=True):
         """Load environment variables as Flask configuration settings.
@@ -68,7 +68,7 @@ class AppConfig(object):
             envvars = { k:None for k in envvars }
 
         if not envvars:
-            envvars = { k:k[len(prefix):] for k in environ.iterkeys()
+            envvars = { k:k[len(prefix):] for k in os.environ.iterkeys()
                          if k.startswith(prefix) }
 
         for env_name, name in envvars.iteritems():
@@ -80,11 +80,11 @@ class AppConfig(object):
 
             if as_json:
                 try:
-                    conf[name] = json.loads(environ[env_name])
+                    conf[name] = json.loads(os.environ[env_name])
                 except ValueError:
-                    conf[name] = environ[env_name]
+                    conf[name] = os.environ[env_name]
             else:
-                conf[name] = environ[env_name]
+                conf[name] = os.environ[env_name]
 
 
 class HerokuConfig(AppConfig):
@@ -130,8 +130,8 @@ class HerokuConfig(AppConfig):
         ]
 
         # import the relevant envvars
-        self.from_envvars(var_list)
-        self.from_envvars(var_map)
+        self.from_envvars(app.config, var_list)
+        self.from_envvars(app.config, var_map)
 
         # fix up configuration
         if 'MAILGUN_SMTP_SERVER' in app.config:
