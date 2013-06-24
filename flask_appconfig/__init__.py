@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import json
+import os
 
 class AppConfig(object):
     def __init__(self, app=None):
