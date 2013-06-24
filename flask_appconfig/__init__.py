@@ -2,6 +2,7 @@
 
 import json
 import os
+from urlparse import urlparse
 
 DEFAULT_ENV_PREFIX = 'FLASK_'
 
@@ -81,3 +82,91 @@ class AppConfig(object):
                     conf[name] = environ[env_name]
             else:
                 conf[name] = environ[env_name]
+
+
+class HerokuConfig(AppConfig):
+    def init_app(self, *args, **kwargs):
+        super(HerokuConfig, self).__init__(*args, **kwargs)
+
+        var_map = {
+            # SQL-Alchemy
+            'DATABASE_URL': 'SQLALCHEMY_DATABASE_URL',
+
+            # newer-style
+            'HEROKU_POSTGRESQL_ORANGE_URL': 'SQLALCHEMY_DATABASE_URL',
+
+            # Celery w/ RabbitMQ
+            'BROKER_URL': 'RABBITMQ_URL',
+
+            'REDISTOGO_URL': 'REDIS_URL',
+            'MONGOLAB_URI': 'MONGO_URI',
+            'MONGOHQ_URL': 'MONGO_URI',
+            'CLOUDANT_URL': 'COUCHDB_URL',
+
+            'MEMCACHIER_SERVERS': 'CACHE_MEMCACHED_SERVERS',
+            'MEMCACHIER_USERNAME': 'CACHE_MEMCACHED_USERNAME',
+            'MEMCACHIER_PASSWORD': 'CACHE_MEMCACHED_PASSWORD',
+        }
+
+        var_list = [
+            # Sentry
+            'SENTRY_DSN',
+
+            # Exceptional
+            'EXCEPTIONAL_API_KEY',
+
+            # Flask-GoogleFed
+            'GOOGLE_DOMAIN',
+
+            # Mailgun
+            'MAILGUN_API_KEY', 'MAILGUN_SMTP_LOGIN', 'MAILGUN_SMTP_PASSWORD',
+            'MAILGUN_SMTP_PORT', 'MAILGUN_SMTP_SERVER',
+
+            # SendGrid
+            'SENDGRID_USERNAME', 'SENDGRID_PASSWORD'
+        ]
+
+        # import the relevant envvars
+        self.from_envvars(var_list)
+        self.from_envvars(var_map)
+
+        # fix up configuration
+        if 'MAILGUN_SMTP_SERVER' in app.config:
+            app.config['SMTP_SERVER'] = app.config['MAILGUN_SMTP_SERVER']
+            app.config['SMTP_PORT'] = app.config['MAILGUN_SMTP_PORT']
+            app.config['SMTP_LOGIN'] = app.config['MAILGUN_SMTP_LOGIN']
+            app.config['SMTP_PASSWORD'] = app.config['MAILGUN_SMTP_PASSWORD']
+            app.config['SMTP_TLS'] = True
+        elif 'SENDGRID_USERNAME' in app.config:
+            app.config['SMTP_SERVER'] = 'smtp.sendgrid.net'
+            app.config['SMTP_PORT'] = 25
+            app.config['SMTP_LOGIN'] = app.config['SENDGRID_USERNAME']
+            app.config['SMTP_PASSWORD'] = app.config['SENDGRID_PASSWORD']
+            app.config['SMTP_USE_TLS'] = True
+
+        # convert to Flask-Mail specific configuration
+        if 'MAILGUN_SMTP_SERVER' in app.config or\
+           'SENDGRID_PASSWORD' in app.config:
+
+           app.config['MAIL_SERVER'] = app.config['SMTP_SERVER']
+           app.config['MAIL_PORT'] = app.config['SMTP_PORT']
+           app.config['MAIL_USE_TLS'] = app.config['SMTP_USE_TLS']
+           app.config['MAIL_USERNAME'] = app.config['SMTP_LOGIN']
+           app.config['MAIL_PASSWORD'] = app.config['SMTP_PASSWORD']
+
+        # fixme: redis
+        # for backwards compatiblity, redis:
+        if 'REDIS_URL' in app.config:
+            url = urlparse(app.config['REDIS_URL'])
+            app.config['REDIS_HOST'] = url.hostname
+            app.config['REDIS_PORT'] = url.port
+            app.config['REDIS_PASSWORD'] = url.password
+            # FIXME: missing db#?
+
+        if 'MONGO_URI' in app.config:
+            url = urlparse(app.config['MONGO_URI'])
+            app.config['MONGODB_USER'] = url.username
+            app.config['MONGODB_PASSWORD'] = url.password
+            app.config['MONGODB_HOST'] = url.hostname
+            app.config['MONGODB_PORT'] = url.port
+            app.config['MONGODB_DB'] = url.path[1:]
