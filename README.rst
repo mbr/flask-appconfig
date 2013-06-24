@@ -43,6 +43,15 @@ accordingly. Forexample, when enabling `Mailgun
 <https://addons.heroku.com/mailgun>`_, the configuration of `Flask-Mail
 <http://pythonhosted.org/Flask-Mail/>`_ will be automatically be set correctly.
 
+Installation
+------------
+
+Via `PyPI <http://pypi.python.org/pypi/flask-appconfig>`::
+
+    $ pip install flask-appconfig
+
+Requires Python 2.7.
+
 
 Thoughts on Configuration
 -------------------------
