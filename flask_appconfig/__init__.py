@@ -75,7 +75,7 @@ class AppConfig(object):
             if name == None:
                 name = env_name
 
-            if not env_name in envvars:
+            if not env_name in os.environ:
                 continue
 
             if as_json:
