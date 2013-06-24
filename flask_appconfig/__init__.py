@@ -9,7 +9,14 @@ class AppConfig(object):
             self.init_app(app, *args, **kwargs)
         return self
 
-    def init_app(self, app, configfile=None, envvar=True):
+    def init_app(self, app,
+                 configfile=None, envvar=True, default_settings=True):
+        if default_settings == True:
+            default_settings = app.name + '.default_settings'
+
+        if default_settings:
+            app.config.from_object(default_settings)
+
         # load supplied configuration file
         if configfile:
             app.config.from_pyfile(config)
