@@ -3,6 +3,9 @@
 import json
 import os
 
+DEFAULT_ENV_PREFIX = 'FLASK_'
+
+
 class AppConfig(object):
     def __init__(self, app=None, *args, **kwargs):
         if app:
@@ -10,7 +13,8 @@ class AppConfig(object):
         return self
 
     def init_app(self, app,
-                 configfile=None, envvar=True, default_settings=True):
+                 configfile=None, envvar=True, default_settings=True,
+                 from_envvars='json', from_envvars_prefix=DEFAULT_ENV_PREFIX):
         if default_settings == True:
             default_settings = app.name + '.default_settings'
 
@@ -28,11 +32,17 @@ class AppConfig(object):
         if envvar and envvar in os.environ:
             app.config.from_envvar(envvar)
 
+        # load environment variables
+        if from_envvars:
+            self.from_envvars(as_json=('json' == from_envvars),
+                              prefix=from_envvars_prefix)
+
         # register extension
         app.extensions = getattr(app, 'extensions', {})
         app.extensions['appconfig'] = self
 
-    def from_envvars(self, envvars=None, environ=os.environ, prefix='FLASK_',
+    def from_envvars(self, envvars=None,
+                           prefix=DEFAULT_ENV_PREFIX,
                            as_json=True):
         """Load environment variables as Flask configuration settings.
 
@@ -43,7 +53,6 @@ class AppConfig(object):
                         to Flask configuration names. If a list is passed
                         instead, names are mapped 1:1. If ``None``, see prefix
                         argument.
-        :param environ: The environment to get values from.
         :param prefix: If ``None`` is passed as envvars, all variables from
                        ``environ`` starting with this prefix are imported. The
                        prefix is stripped upon import.
