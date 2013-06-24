@@ -11,7 +11,6 @@ class AppConfig(object):
     def __init__(self, app=None, *args, **kwargs):
         if app:
             self.init_app(app, *args, **kwargs)
-        return self
 
     def init_app(self, app,
                  configfile=None, envvar=True, default_settings=True,
