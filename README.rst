@@ -7,7 +7,7 @@ Allows you to configure an application using pre-set methods::
 
     def create_app(configfile=None):
         app = Flask('myapp')
-        app.AppConfig()
+        AppConfig(app, configfile)
         return app
 
 The application returned by ``create_app`` will, in order:
@@ -34,7 +34,7 @@ Flask-AppConfig supports configuring a number of services through
 
     def create_app(configfile=None):
         app = Flask('myapp')
-        app.HerokuConfig()
+        HerokuConfig(app, configfile)
         return app
 
 Works like the example above, but environment variables set by various Heroku
