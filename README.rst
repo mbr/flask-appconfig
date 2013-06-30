@@ -67,6 +67,10 @@ This extension aims to do three things:
    an application.
 3. Auto-configure on Heroku as much as possible without sacrificing 1. and 2.
 
+`12factor.net <http://12factor.net/>`_ seems to capture a good amount of good
+thoughts on the issue and Flask-Appconfig should aid you in writing an
+application that follows the principles laid out there.
+
 Providing defaults
 ******************
 
