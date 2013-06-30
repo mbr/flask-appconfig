@@ -44,8 +44,8 @@ def from_heroku_envvars(config):
         ]
 
         # import the relevant envvars
-        env.from_envvars(config, envvars=var_list)
-        env.from_envvars(config, envvars=var_map)
+        env.from_envvars(config, envvars=var_list, as_json=False)
+        env.from_envvars(config, envvars=var_map, as_json=False)
 
         # fix up configuration
         if 'MAILGUN_SMTP_SERVER' in config:
