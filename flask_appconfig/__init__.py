@@ -4,8 +4,6 @@ import json
 import os
 from urlparse import urlparse
 
-DEFAULT_ENV_PREFIX = 'FLASK_'
-
 
 class AppConfig(object):
     def __init__(self, app=None, *args, **kwargs):
@@ -15,8 +13,6 @@ class AppConfig(object):
     def init_app(self, app,
                  configfile=None, envvar=True, default_settings=True,
                  from_envvars='json', from_envvars_prefix=None):
-        if from_envvars_prefix is None:
-            from_envvars_prefix = app.name.upper() + '_'
 
         if default_settings is True:
             try:
@@ -40,20 +36,20 @@ class AppConfig(object):
 
         # load environment variables
         if from_envvars:
-            self.from_envvars(app.config, as_json=('json' == from_envvars),
+            self.from_envvars(app, as_json=('json' == from_envvars),
                               prefix=from_envvars_prefix)
 
         # register extension
         app.extensions = getattr(app, 'extensions', {})
         app.extensions['appconfig'] = self
 
-    def from_envvars(self, conf, envvars=None, prefix=DEFAULT_ENV_PREFIX,
-                     as_json=True):
+    def from_envvars(self, app, envvars=None, prefix=None, as_json=True):
         """Load environment variables as Flask configuration settings.
 
         Values are parsed as JSON. If parsing fails with a ValueError,
         values are instead used as verbatim strings.
 
+        :param app: App, whose configuration should be loaded from ENVVARs.
         :param envvars: A dictionary of mappings of environment-variable-names
                         to Flask configuration names. If a list is passed
                         instead, names are mapped 1:1. If ``None``, see prefix
@@ -63,6 +59,9 @@ class AppConfig(object):
                        prefix is stripped upon import.
         :param as_json: If False, values will not be parsed as JSON first.
         """
+        conf = app.config
+        if prefix is None:
+            prefix = app.name.upper() + '_'
 
         # if it's a list, convert to dict
         if isinstance(envvars, list):
@@ -131,8 +130,8 @@ class HerokuConfig(AppConfig):
         ]
 
         # import the relevant envvars
-        self.from_envvars(app.config, var_list)
-        self.from_envvars(app.config, var_map)
+        self.from_envvars(app, var_list)
+        self.from_envvars(app, var_map)
 
         # fix up configuration
         if 'MAILGUN_SMTP_SERVER' in app.config:
