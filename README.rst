@@ -123,4 +123,3 @@ Backwards-incompatible changes, as they were introduced:
   uppercase).
 * ``MYAPP_SETTINGS`` became ``MYAPP_CONFIG``, ``default_settings`` became
   ``default_config``.
-* The ``from_envvars`` parameter has been renamed to ``load_envvars``.
