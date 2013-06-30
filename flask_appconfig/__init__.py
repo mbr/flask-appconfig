@@ -15,10 +15,10 @@ class AppConfig(object):
     def init_app(self, app,
                  configfile=None, envvar=True, default_settings=True,
                  from_envvars='json', from_envvars_prefix=None):
-        if from_envvars_prefix == None:
+        if from_envvars_prefix is None:
             from_envvars_prefix = app.name.upper() + '_'
 
-        if default_settings == True:
+        if default_settings is True:
             try:
                 app.config.from_object(app.name + '.default_settings')
             except ImportError:
@@ -27,13 +27,12 @@ class AppConfig(object):
         elif default_settings:
             app.config.from_object(default_settings)
 
-
         # load supplied configuration file
         if configfile:
             app.config.from_pyfile(configfile)
 
         # load configuration file from environment
-        if envvar == True:
+        if envvar is True:
             envvar = app.name.upper() + '_SETTINGS'
 
         if envvar and envvar in os.environ:
@@ -48,9 +47,8 @@ class AppConfig(object):
         app.extensions = getattr(app, 'extensions', {})
         app.extensions['appconfig'] = self
 
-    def from_envvars(self, conf, envvars=None,
-                           prefix=DEFAULT_ENV_PREFIX,
-                           as_json=True):
+    def from_envvars(self, conf, envvars=None, prefix=DEFAULT_ENV_PREFIX,
+                     as_json=True):
         """Load environment variables as Flask configuration settings.
 
         Values are parsed as JSON. If parsing fails with a ValueError,
@@ -68,14 +66,14 @@ class AppConfig(object):
 
         # if it's a list, convert to dict
         if isinstance(envvars, list):
-            envvars = { k:None for k in envvars }
+            envvars = {k: None for k in envvars}
 
         if not envvars:
-            envvars = { k:k[len(prefix):] for k in os.environ.iterkeys()
-                         if k.startswith(prefix) }
+            envvars = {k: k[len(prefix):] for k in os.environ.iterkeys()
+                       if k.startswith(prefix)}
 
         for env_name, name in envvars.iteritems():
-            if name == None:
+            if name is None:
                 name = env_name
 
             if not env_name in os.environ:
@@ -154,11 +152,11 @@ class HerokuConfig(AppConfig):
         if 'MAILGUN_SMTP_SERVER' in app.config or\
            'SENDGRID_PASSWORD' in app.config:
 
-           app.config['MAIL_SERVER'] = app.config['SMTP_SERVER']
-           app.config['MAIL_PORT'] = app.config['SMTP_PORT']
-           app.config['MAIL_USE_TLS'] = app.config['SMTP_USE_TLS']
-           app.config['MAIL_USERNAME'] = app.config['SMTP_LOGIN']
-           app.config['MAIL_PASSWORD'] = app.config['SMTP_PASSWORD']
+            app.config['MAIL_SERVER'] = app.config['SMTP_SERVER']
+            app.config['MAIL_PORT'] = app.config['SMTP_PORT']
+            app.config['MAIL_USE_TLS'] = app.config['SMTP_USE_TLS']
+            app.config['MAIL_USERNAME'] = app.config['SMTP_LOGIN']
+            app.config['MAIL_PASSWORD'] = app.config['SMTP_PASSWORD']
 
         # for backwards compatiblity, redis:
         if 'REDIS_URL' in app.config:
