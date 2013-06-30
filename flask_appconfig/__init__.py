@@ -12,7 +12,10 @@ class AppConfig(object):
 
     def init_app(self, app,
                  configfile=None, envvar=True, default_settings=True,
-                 from_envvars='json', from_envvars_prefix=None):
+                 load_envvars='json', from_envvars_prefix=None):
+
+        if from_envvars_prefix is None:
+            from_envvars_prefix = app.name.upper() + '_'
 
         if default_settings is True:
             try:
@@ -35,56 +38,13 @@ class AppConfig(object):
             app.config.from_envvar(envvar)
 
         # load environment variables
-        if from_envvars:
-            self.from_envvars(app, as_json=('json' == from_envvars),
-                              prefix=from_envvars_prefix)
+        if load_envvars:
+            from_envvars(app.config, from_envvars_prefix,
+                         as_json=('json' == load_envvars))
 
         # register extension
         app.extensions = getattr(app, 'extensions', {})
         app.extensions['appconfig'] = self
-
-    def from_envvars(self, app, envvars=None, prefix=None, as_json=True):
-        """Load environment variables as Flask configuration settings.
-
-        Values are parsed as JSON. If parsing fails with a ValueError,
-        values are instead used as verbatim strings.
-
-        :param app: App, whose configuration should be loaded from ENVVARs.
-        :param envvars: A dictionary of mappings of environment-variable-names
-                        to Flask configuration names. If a list is passed
-                        instead, names are mapped 1:1. If ``None``, see prefix
-                        argument.
-        :param prefix: If ``None`` is passed as envvars, all variables from
-                       ``environ`` starting with this prefix are imported. The
-                       prefix is stripped upon import.
-        :param as_json: If False, values will not be parsed as JSON first.
-        """
-        conf = app.config
-        if prefix is None:
-            prefix = app.name.upper() + '_'
-
-        # if it's a list, convert to dict
-        if isinstance(envvars, list):
-            envvars = {k: None for k in envvars}
-
-        if not envvars:
-            envvars = {k: k[len(prefix):] for k in os.environ.iterkeys()
-                       if k.startswith(prefix)}
-
-        for env_name, name in envvars.iteritems():
-            if name is None:
-                name = env_name
-
-            if not env_name in os.environ:
-                continue
-
-            if as_json:
-                try:
-                    conf[name] = json.loads(os.environ[env_name])
-                except ValueError:
-                    conf[name] = os.environ[env_name]
-            else:
-                conf[name] = os.environ[env_name]
 
 
 class HerokuConfig(AppConfig):
@@ -172,3 +132,44 @@ class HerokuConfig(AppConfig):
             app.config['MONGODB_HOST'] = url.hostname
             app.config['MONGODB_PORT'] = url.port
             app.config['MONGODB_DB'] = url.path[1:]
+
+
+def from_envvars(conf, prefix, envvars=None, as_json=True):
+    """Load environment variables as Flask configuration settings.
+
+    Values are parsed as JSON. If parsing fails with a ValueError,
+    values are instead used as verbatim strings.
+
+    :param app: App, whose configuration should be loaded from ENVVARs.
+    :param envvars: A dictionary of mappings of environment-variable-names
+                    to Flask configuration names. If a list is passed
+                    instead, names are mapped 1:1. If ``None``, see prefix
+                    argument.
+    :param prefix: If ``None`` is passed as envvars, all variables from
+                   ``environ`` starting with this prefix are imported. The
+                   prefix is stripped upon import.
+    :param as_json: If False, values will not be parsed as JSON first.
+    """
+
+    # if it's a list, convert to dict
+    if isinstance(envvars, list):
+        envvars = {k: None for k in envvars}
+
+    if not envvars:
+        envvars = {k: k[len(prefix):] for k in os.environ.iterkeys()
+                   if k.startswith(prefix)}
+
+    for env_name, name in envvars.iteritems():
+        if name is None:
+            name = env_name
+
+        if not env_name in os.environ:
+            continue
+
+        if as_json:
+            try:
+                conf[name] = json.loads(os.environ[env_name])
+            except ValueError:
+                conf[name] = os.environ[env_name]
+        else:
+            conf[name] = os.environ[env_name]
