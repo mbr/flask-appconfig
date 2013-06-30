@@ -139,9 +139,8 @@ Changelog
 
 Backwards-incompatible changes, as they were introduced:
 
-
 0.4
-~~~
+***
 * Environment variables are no longer prefixed with ``FLASK_`` by default, but
   rather use ``APPNAME_`` (with ``APPNAME`` being the applications name in
   uppercase).
