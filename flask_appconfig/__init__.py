@@ -30,7 +30,7 @@ class AppConfig(object):
 
         # load supplied configuration file
         if configfile:
-            app.config.from_pyfile(config)
+            app.config.from_pyfile(configfile)
 
         # load configuration file from environment
         if envvar == True:
