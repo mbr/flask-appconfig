@@ -12,11 +12,11 @@ Allows you to configure an application using pre-set methods::
 
 The application returned by ``create_app`` will, in order:
 
-1. Load default settings from a module called ``myapp.default_settings``, if it
+1. Load default settings from a module called ``myapp.default_config``, if it
    exists. (method described in
    http://flask.pocoo.org/docs/config/#configuring-from-files )
 2. Load settings from a configuration file whose name is given in the
-   environment variable ``MYAPP_SETTINGS`` (see link from 1.).
+   environment variable ``MYAPP_CONFIG`` (see link from 1.).
 3. Load json or string values directly from environment variables that start
    with a prefix of ``MYAPP_``, i.e. setting ``MYAPP_SQLALCHEMY_ECHO=true``
    will cause the setting of ``SQLALCHEMY_ECHO`` to be ``True``.
@@ -121,3 +121,5 @@ Backwards-incompatible changes, as they were introduced:
 * Environment variables are no longer prefixed with ``FLASK_`` by default, but
   rather use ``APPNAME_`` (with ``APPNAME`` being the applications name in
   uppercase).
+* ``MYAPP_SETTINGS`` became ``MYAPP_CONFIG``, ``default_settings`` became
+  ``default_config``.
