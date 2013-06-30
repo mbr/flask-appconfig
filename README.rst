@@ -1,7 +1,9 @@
 Flask-AppConfig
 ===============
 
-Allows you to configure an application using pre-set methods::
+Allows you to configure an application using pre-set methods.
+
+.. code-block:: python
 
     from flask.ext.appconfig import AppConfig
 
@@ -28,7 +30,9 @@ Heroku support
 --------------
 
 Flask-AppConfig supports configuring a number of services through
-``HerokuConfig``::
+``HerokuConfig``:
+
+.. code-block:: python
 
     from flask.ext.appconfig import HerokuConfig
 
@@ -47,7 +51,9 @@ Using "ENV-only"
 ----------------
 
 If you only want to use the environment-parsing functions of Flask-AppConfig,
-the appropriate functions are exposed::
+the appropriate functions are exposed:
+
+.. code-block:: python
 
     from flask_appconfig.heroku import from_heroku_envvars
     from flask_appconfig.env import from_envvars
