@@ -43,6 +43,24 @@ accordingly. Forexample, when enabling `Mailgun
 <https://addons.heroku.com/mailgun>`_, the configuration of `Flask-Mail
 <http://pythonhosted.org/Flask-Mail/>`_ will be automatically be set correctly.
 
+Using "ENV-only"
+----------------
+
+If you only want to use the environment-parsing functions of Flask-AppConfig,
+the appropriate functions are exposed::
+
+    from flask_appconfig.heroku import from_heroku_envvars
+    from flask_appconfig.env import from_envvars
+
+    # from environment variables. note that you need to set the prefix, as
+    # no auto-detection can be done without an app object
+    from_envvars(app.config, prefix=app.name.upper() + '_')
+
+    # also possible: parse heroku configuration values
+    # any dict-like object will do as the first parameter
+    from_heroku_envvars(app.config)
+
+
 Installation
 ------------
 
