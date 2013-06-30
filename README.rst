@@ -14,7 +14,7 @@ The application returned by ``create_app`` will, in order:
 
 1. Load default settings from a module called ``myapp.default_settings``, if it
    exists. (method described in
-   <http://flask.pocoo.org/docs/config/#configuring-from-files>)
+   <http://flask.pocoo.org/docs/config/#configuring-from-files>_)
 2. Load settings from a configuration file whose name is given in the
    environment variable ``MYAPP_SETTINGS`` (see link from 1.).
 3. Load json or string values directly from environment variables that start
@@ -46,7 +46,7 @@ accordingly. Forexample, when enabling `Mailgun
 Installation
 ------------
 
-Via `PyPI <http://pypi.python.org/pypi/flask-appconfig>`::
+Via `PyPI <http://pypi.python.org/pypi/flask-appconfig>`_::
 
     $ pip install flask-appconfig
 
