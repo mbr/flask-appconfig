@@ -14,7 +14,10 @@ class AppConfig(object):
 
     def init_app(self, app,
                  configfile=None, envvar=True, default_settings=True,
-                 from_envvars='json', from_envvars_prefix=DEFAULT_ENV_PREFIX):
+                 from_envvars='json', from_envvars_prefix=None):
+        if from_envvars_prefix == None:
+            from_envvars_prefix = app.name.upper() + '_'
+
         if default_settings == True:
             try:
                 app.config.from_object(app.name + '.default_settings')

@@ -18,7 +18,7 @@ The application returned by ``create_app`` will, in order:
 2. Load settings from a configuration file whose name is given in the
    environment variable ``MYAPP_SETTINGS`` (see link from 1.).
 3. Load json or string values directly from environment variables that start
-   with a prefix of ``FLASK_``, i.e. setting ``FLASK_SQLALCHEMY_ECHO=true``
+   with a prefix of ``MYAPP_``, i.e. setting ``MYAPP_SQLALCHEMY_ECHO=true``
    will cause the setting of ``SQLALCHEMY_ECHO`` to be ``True``.
 
 Any of these behaviors can be altered or disabled by passing the appropriate
@@ -109,3 +109,15 @@ Flask-AppConfig is under "conceptional development". The API or semantics
 may change in the future.
 
 Send pull requests for more Heroku-apps to be supported. Send feedback via mail.
+
+Changelog
+=========
+
+Backwards-incompatible changes, as they were introduced:
+
+
+0.4
+---
+* Environment variables are no longer prefixed with ``FLASK_`` by default, but
+  rather use ``APPNAME_`` (with ``APPNAME`` being the applications name in
+  uppercase).
