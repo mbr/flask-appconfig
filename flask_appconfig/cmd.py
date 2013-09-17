@@ -2,7 +2,7 @@ import argparse
 import sys
 
 
-def main_devrun():
+def main_flaskdev():
     try:
         import importlib
     except ImportError:

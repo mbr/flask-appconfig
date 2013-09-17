@@ -24,7 +24,7 @@ setup(
     install_requires=['flask'],
     entry_points={
         'console_scripts': [
-            'devrun = flask_appconfig.cmd:main_devrun',
+            'flaskdev = flask_appconfig.cmd:main_flaskdev',
         ],
     }
 )
