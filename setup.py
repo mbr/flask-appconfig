@@ -22,4 +22,9 @@ setup(
     license='MIT',
     packages=find_packages(exclude=['test']),
     install_requires=['flask'],
+    entry_points={
+        'console_scripts': [
+            'devrun = flask_appconfig.cmd:main_devrun',
+        ],
+    }
 )
