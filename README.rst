@@ -77,6 +77,17 @@ Via `PyPI <http://pypi.python.org/pypi/flask-appconfig>`_::
 Requires Python 2.7.
 
 
+flaskdev utility
+----------------
+
+If you want to get started quickly without thinking a lot about writing a run
+script, the ``flaskdev`` utility supports the ``create_app``/factory pattern::
+
+    $ flaskdev myapp
+
+This will import a module ``myapp``, and call ``myapp.run(debug=True)``.
+
+
 Thoughts on Configuration
 -------------------------
 
