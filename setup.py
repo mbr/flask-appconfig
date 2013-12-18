@@ -20,7 +20,7 @@ setup(
     author_email='git@marcbrinkmann.de',
     url='http://github.com/mbr/flask-appconfig',
     license='MIT',
-    packages=find_packages(exclude=['test']),
+    packages=find_packages(exclude=['tests']),
     install_requires=['flask'],
     entry_points={
         'console_scripts': [
