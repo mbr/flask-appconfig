@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+import os
+import re
 from six import PY2
 
 if PY2:
@@ -10,13 +12,13 @@ else:
 from . import env
 
 
+HEROKU_POSTGRES_ENV_NAME_RE = re.compile('HEROKU_POSTGRESQL_[A-Z_]*URL')
+
+
 def from_heroku_envvars(config):
         var_map = {
             # SQL-Alchemy
             'DATABASE_URL': 'SQLALCHEMY_DATABASE_URI',
-
-            # newer-style
-            'HEROKU_POSTGRESQL_ORANGE_URL': 'SQLALCHEMY_DATABASE_URI',
 
             # Celery w/ RabbitMQ
             'BROKER_URL': 'RABBITMQ_URL',
@@ -30,6 +32,11 @@ def from_heroku_envvars(config):
             'MEMCACHIER_USERNAME': 'CACHE_MEMCACHED_USERNAME',
             'MEMCACHIER_PASSWORD': 'CACHE_MEMCACHED_PASSWORD',
         }
+
+        # search postgresql config using regex
+        for k in os.environ.keys():
+            if HEROKU_POSTGRES_ENV_NAME_RE.match(k):
+                var_map[k] = 'SQLALCHEMY_DATABASE_URI'
 
         var_list = [
             # Sentry
