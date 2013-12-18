@@ -28,10 +28,10 @@ def from_envvars(conf, prefix=None, envvars=None, as_json=True):
         envvars = {k: None for k in envvars}
 
     if not envvars:
-        envvars = {k: k[len(prefix):] for k in os.environ.iterkeys()
+        envvars = {k: k[len(prefix):] for k in os.environ.keys()
                    if k.startswith(prefix)}
 
-    for env_name, name in envvars.iteritems():
+    for env_name, name in envvars.items():
         if name is None:
             name = env_name
 
