@@ -1,6 +1,12 @@
 #!/usr/bin/env python
 
-from urlparse import urlparse
+from six import PY2
+
+if PY2:
+    from urlparse import urlparse
+else:
+    from urllib.parse import urlparse
+
 from . import env
 
 
