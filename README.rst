@@ -1,6 +1,8 @@
 Flask-AppConfig
 ===============
 
+Supports: Python 2.7+ and Python 3.3+
+
 Allows you to configure an application using pre-set methods.
 
 .. code-block:: python
