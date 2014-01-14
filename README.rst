@@ -89,6 +89,11 @@ script, the ``flaskdev`` utility supports the ``create_app``/factory pattern::
 
 This will import a module ``myapp``, and call ``myapp.run(debug=True)``.
 
+Other options can come in handy as well::
+
+    $ flaskdev -S -p 8000 myapp
+
+Runs the app on port 8080, with SSL enabled.
 
 Thoughts on Configuration
 -------------------------
