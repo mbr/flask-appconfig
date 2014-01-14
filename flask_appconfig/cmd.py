@@ -19,7 +19,16 @@ def main_flaskdev():
     parser.add_argument('-c', '--configfile',
                         help='Configuration file to pass as the first '
                         'parameter to create_app.')
+    parser.add_argument('-H', '--hostname', default='localhost',
+                        help='Hostname to bind to. Defaults to localhost.')
+    parser.add_argument('-p', '--port', default=5000, type=int,
+                        help='Port to listen on. Defaults to 5000.')
+    parser.add_argument('-S', '--ssl', default=None, action='store_const',
+                        const='adhoc',
+                        help='Enable SSL with a self-signed cert.')
 
     args = parser.parse_args()
     mod = importlib.import_module(args.module_name)
-    mod.create_app(args.configfile).run(debug=True)
+    mod.create_app(args.configfile).run(args.hostname, args.port,
+                                        ssl_context=args.ssl,
+                                        debug=True)
