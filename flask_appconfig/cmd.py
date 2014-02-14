@@ -78,7 +78,6 @@ def main_flaskdev():
     args = parser.parse_args()
 
     if args.env and os.path.exists(args.env):
-        print('Reading environment from', args.env)
         buf = open(args.env).read()
         os.environ.update(honcho_parse_env(buf))
 
