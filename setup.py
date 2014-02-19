@@ -12,7 +12,7 @@ def read(fname):
 
 setup(
     name='flask-appconfig',
-    version='0.8.dev1',
+    version='0.8',
     description=('Configures Flask applications in a canonical way. Also auto-'
                  'configures Heroku. Aims to standardize configuration.'),
     long_description=read('README.rst'),
