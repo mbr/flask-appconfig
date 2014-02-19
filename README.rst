@@ -1,6 +1,9 @@
 Flask-AppConfig
 ===============
 
+.. image:: https://travis-ci.org/mbr/flask-appconfig.png?branch=master
+   :target: https://travis-ci.org/mbr/flask-appconfig
+
 Supports: Python 2.7+ and Python 3.3+
 
 Allows you to configure an application using pre-set methods.
