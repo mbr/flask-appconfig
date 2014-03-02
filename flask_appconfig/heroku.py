@@ -2,6 +2,7 @@
 
 import os
 import re
+import warnings
 from six import PY2
 
 if PY2:
@@ -34,9 +35,14 @@ def from_heroku_envvars(config):
         }
 
         # search postgresql config using regex
-        for k in os.environ.keys():
-            if HEROKU_POSTGRES_ENV_NAME_RE.match(k):
-                var_map[k] = 'SQLALCHEMY_DATABASE_URI'
+        if not 'DATABASE_URL' in os.environ:
+            for k in os.environ.keys():
+                if HEROKU_POSTGRES_ENV_NAME_RE.match(k):
+                    var_map[k] = 'SQLALCHEMY_DATABASE_URI'
+                    warnings.warn('Using {0} as the database URL. However, '
+                                  'really should promote this or another URL '
+                                  'to DATABASE_URL by running \'heroku pg:'
+                                  'promote {0}\''.format(k), RuntimeWarning)
 
         var_list = [
             # Sentry
