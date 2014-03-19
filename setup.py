@@ -21,6 +21,7 @@ setup(
     url='http://github.com/mbr/flask-appconfig',
     license='MIT',
     packages=find_packages(exclude=['tests']),
+    py_modules=['flaskdev.py'],
     install_requires=['flask', 'six'],
     entry_points={
         'console_scripts': [

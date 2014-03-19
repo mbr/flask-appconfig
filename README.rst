@@ -98,6 +98,15 @@ Other options can come in handy as well::
 
 Runs the app on port 8080, with SSL enabled.
 
+IDE support
+***********
+
+Some IDEs may be more comfortable with running a module using Python's
+``-m`` switch. The following is equivalent to the example above::
+
+    $ python -m flaskdev -S -p 8000 myapp
+
+
 Thoughts on Configuration
 -------------------------
 
