@@ -108,6 +108,14 @@ Some IDEs may be more comfortable with running a module using Python's
 
     $ python -m flaskdev -S -p 8000 myapp
 
+Flask-Debug support
+*******************
+
+``flaskdev`` automatically activates `Flask-Debug
+<https://github.com/mbr/flask-debug>`_ on your application; this allows to have
+it installed locally while not having to install any debug code in production.
+You can suppress this behavior with the ``-E``/``--no-flask-debug`` flag.
+
 
 Thoughts on Configuration
 -------------------------
