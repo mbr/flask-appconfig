@@ -26,5 +26,9 @@ setup(
         'console_scripts': [
             'flaskdev = flask_appconfig.cli:main',
         ],
-    }
+    },
+    classifiers=[
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 3',
+    ]
 )
