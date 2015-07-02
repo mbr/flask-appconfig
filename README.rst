@@ -31,6 +31,7 @@ The application returned by ``create_app`` will, in order:
 Any of these behaviors can be altered or disabled by passing the appropriate
 options to the constructor or ``init_app()``.
 
+
 Heroku support
 --------------
 
@@ -51,6 +52,7 @@ addons will be parsed as json and converted to configuration variables
 accordingly. Forexample, when enabling `Mailgun
 <https://addons.heroku.com/mailgun>`_, the configuration of `Flask-Mail
 <http://pythonhosted.org/Flask-Mail/>`_ will be automatically be set correctly.
+
 
 Using "ENV-only"
 ----------------
