@@ -31,8 +31,8 @@ ENV_DEFAULT = '.env'
 @click.option('--env', '-e', default=None,
               type=click.Path(exists=True, dir_okay=False),
               help='Load environment variables from file (default: ".env")')
-@click.option('--flask-debug/--no-flask-debug', '-e/-E', default=True,
-              help='Enable/disable Flask-Debug extension (enabled by default)')
+@click.option('--flask-debug/--no-flask-debug', '-e/-E', default=None,
+              help='Enable/disable Flask-Debug extension (same as --debug)')
 def main(module_name, configfile, debug, hostname, port, ssl, env,
          flask_debug):
     try:
@@ -41,6 +41,9 @@ def main(module_name, configfile, debug, hostname, port, ssl, env,
         click.echo('You do not have importlib installed. Please install a '
                    'backport for versions < 2.7/3.1 of it first.')
         sys.exit(1)
+
+    if flask_debug is None:
+        flask_debug = debug
 
     Debug = None
 
