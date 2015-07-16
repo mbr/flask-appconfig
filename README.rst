@@ -178,6 +178,10 @@ Changelog
 
 Backwards-incompatible changes, as they were introduced:
 
+0.11
+****
+* The ``flaskdev`` tool has been replace with ``flask``.
+
 0.4
 ***
 * Environment variables are no longer prefixed with ``FLASK_`` by default, but
