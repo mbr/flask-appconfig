@@ -35,6 +35,12 @@ ENV_DEFAULT = '.env'
                    'extensions (default: same as --debug)')
 def main(module_name, configfile, debug, hostname, port, ssl, env,
          flask_debug):
+    # extra files for the reloader to watch
+    extra_files = []
+
+    if configfile:
+        extra_files.append(configfile)
+
     try:
         import importlib
     except ImportError:
@@ -64,6 +70,7 @@ def main(module_name, configfile, debug, hostname, port, ssl, env,
         env = ENV_DEFAULT
 
     if env:
+        extra_files.append(env)
         buf = open(env).read()
         os.environ.update(honcho_parse_env(buf))
 
@@ -102,4 +109,5 @@ def main(module_name, configfile, debug, hostname, port, ssl, env,
     if msgs:
         click.echo(' * {}'.format(', '.join(msgs)))
 
-    app.run(hostname, port, ssl_context=ssl, debug=debug)
+    app.run(hostname, port, ssl_context=ssl, debug=debug,
+            extra_files=extra_files)
