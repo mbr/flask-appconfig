@@ -32,7 +32,8 @@ ENV_DEFAULT = '.env'
               type=click.Path(exists=True, dir_okay=False),
               help='Load environment variables from file (default: ".env")')
 @click.option('--flask-debug/--no-flask-debug', '-e/-E', default=None,
-              help='Enable/disable Flask-Debug extension (same as --debug)')
+              help='Enable/disable Flask-Debug or Flask-DebugToolbar '
+                   'extensions (default: same as --debug)')
 def main(module_name, configfile, debug, hostname, port, ssl, env,
          flask_debug):
     try:
@@ -41,6 +42,8 @@ def main(module_name, configfile, debug, hostname, port, ssl, env,
         click.echo('You do not have importlib installed. Please install a '
                    'backport for versions < 2.7/3.1 of it first.')
         sys.exit(1)
+
+    msgs = []
 
     if flask_debug is None:
         flask_debug = debug
@@ -51,8 +54,12 @@ def main(module_name, configfile, debug, hostname, port, ssl, env,
         try:
             from flask_debug import Debug
         except ImportError:
-            click.echo(' * Flask-Debug: Not installed')
             Debug = None
+
+        try:
+            from flask_debugtoolbar import DebugToolbarExtension
+        except ImportError:
+            DebugToolbarExtension = None
 
     if env is None and os.path.exists(ENV_DEFAULT):
         env = ENV_DEFAULT
@@ -67,12 +74,33 @@ def main(module_name, configfile, debug, hostname, port, ssl, env,
     if Debug:
         Debug(app)
         app.config['SERVER_NAME'] = '{}:{}'.format(hostname, port)
-        with app.app_context():
-            click.echo(' * Flask-Debug active, available at {}'.format(
-                url_for('debug.debug_root'),
-            ))
 
         # taking off the safety wheels
         app.config['FLASK_DEBUG_DISABLE_STRICT'] = True
+
+    if DebugToolbarExtension:
+        # Flask-Debugtoolbar does not check for debugging settings at runtime.
+        # this hack enabled debugging if desired before initializing the
+        # extension
+        if debug:
+            app.debug = True
+
+            # set the SECRET_KEY, but only if we're in debug-mode
+            if not app.config.get('SECRET_KEY', None):
+                msgs.append('SECRET_KEY not set, using insecure "devkey"')
+                app.config['SECRET_KEY'] = 'devkey'
+
+        DebugToolbarExtension(app)
+
+    def on_off(ext):
+        return 'on' if ext is not None else 'off'
+
+    msgs.insert(0, 'Flask-Debug: {}'.format(on_off(Debug)))
+    msgs.insert(0, 'Flask-DebugToolbar: {}'.format(
+        on_off(DebugToolbarExtension))
+    )
+
+    if msgs:
+        click.echo(' * {}'.format(', '.join(msgs)))
 
     app.run(hostname, port, ssl_context=ssl, debug=debug)
