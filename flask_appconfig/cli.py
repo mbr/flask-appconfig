@@ -3,6 +3,7 @@ import sys
 
 import click
 
+from . import server_backends
 from .util import honcho_parse_env
 
 
@@ -126,3 +127,36 @@ def dev(obj, debug, hostname, port, ssl, flask_debug):
 
     app.run(hostname, port, ssl_context=ssl, debug=debug,
             extra_files=obj['extra_files'])
+
+
+@cli.command()
+@click.option('--hostname', '-H', default='0.0.0.0',
+              help='Hostname to bind to. Defaults to 0.0.0.0')
+@click.option('--port', '-p', type=int, default=80,
+              help='Port to listen on. Defaults to 80')
+@click.option('--backends', '-b',
+              default=server_backends.DEFAULT,
+              help='Comma-separated list of backends to try')
+@click.pass_obj
+def serve(obj, hostname, port, backends):
+    app = obj['app']
+
+    for backend in backends.split(','):
+        func = getattr(server_backends, backend.replace('-', '_'), None)
+        if not callable(func):
+            click.echo('Not a valid backend: {}'.format(backend))
+            continue
+        click.echo('Trying backend {}'.format(backend))
+
+        try:
+            if func(app, hostname, port) is None:
+                continue
+            break
+        except RuntimeError as e:
+            click.echo(str(e), err=True)
+            sys.exit(1)
+        except ImportError:
+            continue
+    else:
+        click.echo('Exhausted list of possible backends', err=True)
+        sys.exit(1)
