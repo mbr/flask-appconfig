@@ -116,6 +116,9 @@ your application; this allows to have it installed locally while not having to
 install any debug code in production. You can suppress this behavior with the
 ``-E``/``--no-flask-debug`` flag.
 
+Note that these features are only enabled if you install either of these
+extensions manually; they are not dependencies of Flask-Appconfig.
+
 .. _Flask-Debug: https://github.com/mbr/flask-debug
 .. _Flask-DebugToolbar: https://flask-debugtoolbar.readthedocs.org/
 
