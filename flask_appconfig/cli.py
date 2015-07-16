@@ -76,17 +76,18 @@ def dev(obj, debug, hostname, port, ssl, flask_debug):
         flask_debug = debug
 
     Debug = None
+    DebugToolbarExtension = None
 
     if flask_debug:
         try:
             from flask_debug import Debug
         except ImportError:
-            Debug = None
+            pass
 
         try:
             from flask_debugtoolbar import DebugToolbarExtension
         except ImportError:
-            DebugToolbarExtension = None
+            pass
 
     if Debug:
         Debug(app)
