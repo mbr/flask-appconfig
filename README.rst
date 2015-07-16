@@ -84,34 +84,27 @@ Via `PyPI <http://pypi.python.org/pypi/flask-appconfig>`_::
 Requires Python 2.7.
 
 
-flaskdev utility
-----------------
+flask utility
+-------------
 
 If you want to get started quickly without thinking a lot about writing a run
-script, the ``flaskdev`` utility supports the ``create_app``/factory pattern::
+script, the ``flask`` utility supports the ``create_app``/factory pattern::
 
-    $ flaskdev myapp
+    $ flask myapp
 
 This will import a module ``myapp``, and call ``myapp.run(debug=True)``.
 
 Other options can come in handy as well::
 
-    $ flaskdev -S -p 8000 myapp
+    $ flask myapp dev -S -p 8000
 
-Runs the app on port 8080, with SSL enabled.
-
-IDE support
-***********
-
-Some IDEs may be more comfortable with running a module using Python's
-``-m`` switch. The following is equivalent to the example above::
-
-    $ python -m flaskdev -S -p 8000 myapp
+Runs the app on port 8080, with SSL enabled (the ``dev`` can be omitted when
+not giving any extra parameters).
 
 Flask-Debug and Flask-DebugToolbar support
 ******************************************
 
-``flaskdev`` automatically activates Flask-Debug_ and Flask-DebugToolbar_ on
+``flask`` automatically activates Flask-Debug_ and Flask-DebugToolbar_ on
 your application; this allows to have it installed locally while not having to
 install any debug code in production. You can suppress this behavior with the
 ``-E``/``--no-flask-debug`` flag.
