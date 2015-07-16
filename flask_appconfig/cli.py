@@ -9,7 +9,7 @@ from .util import honcho_parse_env
 ENV_DEFAULT = '.env'
 
 
-@click.group()
+@click.group(invoke_without_command=True)
 @click.argument('module_name')
 @click.option('--configfile', '-c',
               type=click.Path(exists=True, dir_okay=False),
@@ -48,6 +48,9 @@ def cli(ctx, module_name, configfile, env):
     obj['extra_files'] = extra_files
 
     ctx.obj = obj
+
+    if ctx.invoked_subcommand is None:
+        ctx.invoke(dev)
 
 
 @cli.command(
