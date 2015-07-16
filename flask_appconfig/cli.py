@@ -26,7 +26,7 @@ def cli(ctx, module_name, configfile, env):
         import importlib
     except ImportError:
         click.echo('You do not have importlib installed. Please install a '
-                   'backport for versions < 2.7/3.1 of it first.')
+                   'backport for versions < 2.7/3.1 first.')
         sys.exit(1)
 
     extra_files = []
