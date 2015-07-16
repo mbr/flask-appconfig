@@ -9,16 +9,52 @@ from .util import honcho_parse_env
 ENV_DEFAULT = '.env'
 
 
-@click.command(
-    help='Imports a module passed on the commandline, instantiates an app by '
-         'calling imported_module.create_app() with an optional configuration '
-         'file and runs it in debug mode.'
-)
+@click.group()
 @click.argument('module_name')
 @click.option('--configfile', '-c',
               type=click.Path(exists=True, dir_okay=False),
               help='Configuration file to pass as the first parameter to '
                    'create_app')
+@click.option('--env', '-e', default=None,
+              type=click.Path(exists=True, dir_okay=False),
+              help='Load environment variables from file (default: "{}")'
+                   .format(ENV_DEFAULT))
+@click.pass_context
+def cli(ctx, module_name, configfile, env):
+    try:
+        import importlib
+    except ImportError:
+        click.echo('You do not have importlib installed. Please install a '
+                   'backport for versions < 2.7/3.1 of it first.')
+        sys.exit(1)
+
+    extra_files = []
+    if configfile:
+        extra_files.append(configfile)
+
+    if env is None and os.path.exists(ENV_DEFAULT):
+        env = ENV_DEFAULT
+
+    if env:
+        extra_files.append(env)
+        buf = open(env).read()
+        os.environ.update(honcho_parse_env(buf))
+
+    mod = importlib.import_module(module_name)
+    app = mod.create_app(configfile)
+
+    obj = {}
+    obj['app'] = app
+    obj['extra_files'] = extra_files
+
+    ctx.obj = obj
+
+
+@cli.command(
+    help='Imports a module passed on the commandline, instantiates an app by '
+         'calling imported_module.create_app() with an optional configuration '
+         'file and runs it in debug mode.'
+)
 @click.option('--debug/--no-debug', '-d/-D', default=True,
               help='Enabled/disable debug (enabled by default)')
 @click.option('--hostname', '-H', default='localhost',
@@ -27,26 +63,12 @@ ENV_DEFAULT = '.env'
               help='Port to listen on. Defaults to 5000')
 @click.option('--ssl', '-S', flag_value='adhoc', default=None,
               help='Enable SSL with a self-signed cert')
-@click.option('--env', '-e', default=None,
-              type=click.Path(exists=True, dir_okay=False),
-              help='Load environment variables from file (default: ".env")')
 @click.option('--flask-debug/--no-flask-debug', '-e/-E', default=None,
               help='Enable/disable Flask-Debug or Flask-DebugToolbar '
                    'extensions (default: same as --debug)')
-def main(module_name, configfile, debug, hostname, port, ssl, env,
-         flask_debug):
-    # extra files for the reloader to watch
-    extra_files = []
-
-    if configfile:
-        extra_files.append(configfile)
-
-    try:
-        import importlib
-    except ImportError:
-        click.echo('You do not have importlib installed. Please install a '
-                   'backport for versions < 2.7/3.1 of it first.')
-        sys.exit(1)
+@click.pass_obj
+def dev(obj, debug, hostname, port, ssl, flask_debug):
+    app = obj['app']
 
     msgs = []
 
@@ -65,17 +87,6 @@ def main(module_name, configfile, debug, hostname, port, ssl, env,
             from flask_debugtoolbar import DebugToolbarExtension
         except ImportError:
             DebugToolbarExtension = None
-
-    if env is None and os.path.exists(ENV_DEFAULT):
-        env = ENV_DEFAULT
-
-    if env:
-        extra_files.append(env)
-        buf = open(env).read()
-        os.environ.update(honcho_parse_env(buf))
-
-    mod = importlib.import_module(module_name)
-    app = mod.create_app(configfile)
 
     if Debug:
         Debug(app)
@@ -110,4 +121,4 @@ def main(module_name, configfile, debug, hostname, port, ssl, env,
         click.echo(' * {}'.format(', '.join(msgs)))
 
     app.run(hostname, port, ssl_context=ssl, debug=debug,
-            extra_files=extra_files)
+            extra_files=obj['extra_files'])

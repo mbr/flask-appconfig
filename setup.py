@@ -24,7 +24,7 @@ setup(
     install_requires=['flask', 'six', 'click'],
     entry_points={
         'console_scripts': [
-            'flaskdev = flask_appconfig.cli:main',
+            'flask = flask_appconfig.cli:cli',
         ],
     },
     classifiers=[
