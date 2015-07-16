@@ -2,7 +2,6 @@ import os
 import sys
 
 import click
-from flask import url_for
 
 from .util import honcho_parse_env
 
