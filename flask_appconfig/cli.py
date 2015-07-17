@@ -43,9 +43,10 @@ def cli(ctx, app_name, configfile, env):
         buf = open(env).read()
         os.environ.update(honcho_parse_env(buf))
 
-        #
-        if app_name is None and APP_ENVVAR in os.environ:
-            app_name = os.environ[APP_ENVVAR]
+        # disabled: this functionality will be hard if not impossible to
+        # implemend in flask 1.0. disable it for now
+        # if app_name is None and APP_ENVVAR in os.environ:
+        #     app_name = os.environ[APP_ENVVAR]
 
     if app_name is None:
         click.echo('No --app parameter and FLASK_APP is not set.')
