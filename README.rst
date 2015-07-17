@@ -10,7 +10,7 @@ Allows you to configure an application using pre-set methods.
 
 .. code-block:: python
 
-    from flask.ext.appconfig import AppConfig
+    from flask_appconfig import AppConfig
 
     def create_app(configfile=None):
         app = Flask('myapp')
@@ -40,7 +40,7 @@ Flask-AppConfig supports configuring a number of services through
 
 .. code-block:: python
 
-    from flask.ext.appconfig import HerokuConfig
+    from flask_appconfig import HerokuConfig
 
     def create_app(configfile=None):
         app = Flask('myapp')
