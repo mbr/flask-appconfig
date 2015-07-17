@@ -102,6 +102,10 @@ Runs the app on port 8080, with SSL enabled. You can also set the ``FLASK_APP``
 environment variable or set ``FLASK_APP`` inside ``.env`` and omit the
 ``--app`` parameter.
 
+Note that the ``flask`` utility is subject to change, as it will conflict with
+the CLI functionality of Flask 1.0. The API is currently kept close, but it
+will see changes once Flask 1.0 is released.
+
 
 Flask-Debug and Flask-DebugToolbar support
 ******************************************
