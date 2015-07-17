@@ -47,6 +47,7 @@ def cli(ctx, module_name, configfile, env):
     obj = {}
     obj['app'] = app
     obj['extra_files'] = extra_files
+    obj['app_mod'] = mod
 
     ctx.obj = obj
 
@@ -160,3 +161,33 @@ def serve(obj, hostname, port, backends):
     else:
         click.echo('Exhausted list of possible backends', err=True)
         sys.exit(1)
+
+
+@cli.group()
+@click.option('--model', '-m', default='.model',
+              help='Name of the module that contains the model')
+@click.option('--db', '-d', default='db',
+              help='SQLAlchemy instance name')
+@click.option('--echo/--no-echo', '-e/-E', default=True,
+              help='Overrides SQLALCHEMY_ECHO')
+@click.pass_obj
+def db(obj, model, db, echo):
+    model_mod = importlib.import_module(model, obj['app_mod'].__package__)
+    db_obj = getattr(model_mod, db)
+    obj['db'] = db_obj
+
+    obj['app'].config['SQLALCHEMY_ECHO'] = True
+
+    with obj['app'].app_context():
+        click.echo('Connected to database: {}'.format(obj['db']))
+
+
+@db.command()
+@click.pass_obj
+def reset(obj):
+    db = obj['db']
+
+    with obj['app'].app_context():
+        click.echo('Resetting database')
+        db.drop_all()
+        db.create_all()
