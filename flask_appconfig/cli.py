@@ -6,6 +6,13 @@ import click
 from . import server_backends
 from .util import honcho_parse_env
 
+try:
+    import importlib
+except ImportError:
+    click.echo('You do not have importlib installed. Please install a '
+               'backport for versions < 2.7/3.1 first.')
+    sys.exit(1)
+
 
 ENV_DEFAULT = '.env'
 
@@ -22,13 +29,6 @@ ENV_DEFAULT = '.env'
                    .format(ENV_DEFAULT))
 @click.pass_context
 def cli(ctx, module_name, configfile, env):
-    try:
-        import importlib
-    except ImportError:
-        click.echo('You do not have importlib installed. Please install a '
-                   'backport for versions < 2.7/3.1 first.')
-        sys.exit(1)
-
     extra_files = []
     if configfile:
         extra_files.append(configfile)
