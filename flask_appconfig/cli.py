@@ -15,10 +15,12 @@ except ImportError:
 
 
 ENV_DEFAULT = '.env'
+APP_ENVVAR = 'FLASK_APP'
 
 
 @click.group(invoke_without_command=True)
-@click.argument('module_name')
+@click.option('--app', '-a', 'app_name', envvar=APP_ENVVAR,
+              help='App to import')
 @click.option('--configfile', '-c',
               type=click.Path(exists=True, dir_okay=False),
               help='Configuration file to pass as the first parameter to '
@@ -28,7 +30,7 @@ ENV_DEFAULT = '.env'
               help='Load environment variables from file (default: "{}")'
                    .format(ENV_DEFAULT))
 @click.pass_context
-def cli(ctx, module_name, configfile, env):
+def cli(ctx, app_name, configfile, env):
     extra_files = []
     if configfile:
         extra_files.append(configfile)
@@ -41,7 +43,15 @@ def cli(ctx, module_name, configfile, env):
         buf = open(env).read()
         os.environ.update(honcho_parse_env(buf))
 
-    mod = importlib.import_module(module_name)
+        #
+        if app_name is None and APP_ENVVAR in os.environ:
+            app_name = os.environ[APP_ENVVAR]
+
+    if app_name is None:
+        click.echo('No --app parameter and FLASK_APP is not set.')
+        sys.exit(1)
+
+    mod = importlib.import_module(app_name)
     app = mod.create_app(configfile)
 
     obj = {}
