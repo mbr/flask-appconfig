@@ -182,7 +182,7 @@ Backwards-incompatible changes, as they were introduced:
 
 0.11
 ****
-* The ``flaskdev`` tool has been replace with ``flask``.
+* The ``flaskdev`` tool has been replaced with ``flask``.
 
 0.4
 ***
