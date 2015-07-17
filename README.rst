@@ -90,16 +90,18 @@ flask utility
 If you want to get started quickly without thinking a lot about writing a run
 script, the ``flask`` utility supports the ``create_app``/factory pattern::
 
-    $ flask myapp
+    $ flask --app=myapp dev
 
 This will import a module ``myapp``, and call ``myapp.run(debug=True)``.
 
 Other options can come in handy as well::
 
-    $ flask myapp dev -S -p 8000
+    $ flask --app=myapp dev -S -p 8000
 
-Runs the app on port 8080, with SSL enabled (the ``dev`` can be omitted when
-not giving any extra parameters).
+Runs the app on port 8080, with SSL enabled. You can also set the ``FLASK_APP``
+environment variable or set ``FLASK_APP`` inside ``.env`` and omit the
+``--app`` parameter.
+
 
 Flask-Debug and Flask-DebugToolbar support
 ******************************************
