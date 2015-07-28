@@ -202,3 +202,20 @@ def reset(obj):
         click.echo('Resetting database')
         db.drop_all()
         db.create_all()
+
+
+@click.command()
+@click.argument('app', nargs=-1)
+def flaskdev(app):
+    if not app:
+        app = 'yourapp'
+    else:
+        app = app[0]
+
+    click.echo('flaskdev has been deprecated in favor of the \'flask\' '
+               'utility. flask is included with Flask-Appconfig. '
+               'To perform the same action as before, run\n\n'
+               '    flask --app={} dev\n\n'
+               'Note that this tool is provisional, as Flask 1.0 will likely '
+               'ship with a built-in tool of the same name.'
+               .format(app))

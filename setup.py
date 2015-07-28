@@ -25,6 +25,7 @@ setup(
     entry_points={
         'console_scripts': [
             'flask = flask_appconfig.cli:cli',
+            'flaskdev = flask_appconfig.cli:flaskdev',
         ],
     },
     classifiers=[
