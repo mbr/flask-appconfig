@@ -1,5 +1,6 @@
 import os
 import sys
+import time
 
 import click
 
@@ -82,8 +83,12 @@ def cli(ctx, app_name, configfile, env):
 @click.option('--flask-debug/--no-flask-debug', '-e/-E', default=None,
               help='Enable/disable Flask-Debug or Flask-DebugToolbar '
                    'extensions (default: same as --debug)')
+@click.option('--extended-reload', '-R', default=2, type=float,
+              help='Seconds before restarting the app if a non-recoverable '
+                   'exception occured (e.g. SyntaxError). Set this to 0 '
+                   'to disable (default: 2.0)')
 @click.pass_obj
-def dev(obj, debug, hostname, port, ssl, flask_debug):
+def dev(obj, debug, hostname, port, ssl, flask_debug, extended_reload):
     app = obj['app']
 
     msgs = []
@@ -136,6 +141,27 @@ def dev(obj, debug, hostname, port, ssl, flask_debug):
 
     if msgs:
         click.echo(' * {}'.format(', '.join(msgs)))
+
+    if extended_reload > 0:
+        # we need to moneypatch the werkzeug reloader for this feature
+        from werkzeug._reloader import ReloaderLoop
+        orig_restart = ReloaderLoop.restart_with_reloader
+
+        def _mp_restart(*args, **kwargs):
+            while True:
+                status = orig_restart(*args, **kwargs)
+
+                if status == 0:
+                    break
+                # an error occured, possibly a syntax or other
+                click.secho(
+                    'App exited with exit code {}. Will attempted restart in '
+                    '{} seconds.'.format(status, extended_reload),
+                    fg='red')
+                time.sleep(extended_reload)
+
+            return status
+        ReloaderLoop.restart_with_reloader = _mp_restart
 
     app.run(hostname, port, ssl_context=ssl, debug=debug,
             extra_files=obj['extra_files'])
