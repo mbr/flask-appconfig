@@ -187,6 +187,9 @@ Backwards-incompatible changes, as they were introduced:
 0.11
 ****
 * The ``flaskdev`` tool has been replaced with ``flask``.
+* Using the new ``flask`` tool auto-reloading will also change by default. If a
+  syntax error is introduced to the code, the app will try to restart after two
+  seconds by default, instead of crashing.
 
 0.4
 ***
