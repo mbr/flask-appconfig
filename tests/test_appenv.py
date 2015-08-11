@@ -1,8 +1,6 @@
-import os
-
 from flask import Flask
 from flask_appconfig import AppConfig
-import pytest
+
 
 def create_sample_app():
     app = Flask('testapp')
