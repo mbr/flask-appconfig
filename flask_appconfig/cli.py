@@ -14,20 +14,23 @@ except ImportError:
                'backport for versions < 2.7/3.1 first.')
     sys.exit(1)
 
-
 ENV_DEFAULT = '.env'
 APP_ENVVAR = 'FLASK_APP'
 
 
 @click.group(invoke_without_command=True)
-@click.option('--app', '-a', 'app_name', envvar=APP_ENVVAR,
+@click.option('--app', '-a', 'app_name',
+              envvar=APP_ENVVAR,
               help='App to import')
 @click.option('--configfile', '-c',
-              type=click.Path(exists=True, dir_okay=False),
+              type=click.Path(exists=True,
+                              dir_okay=False),
               help='Configuration file to pass as the first parameter to '
-                   'create_app')
-@click.option('--env', '-e', default=None,
-              type=click.Path(exists=True, dir_okay=False),
+              'create_app')
+@click.option('--env', '-e',
+              default=None,
+              type=click.Path(exists=True,
+                              dir_okay=False),
               help='Load environment variables from file (default: "{}")'
                    .format(ENV_DEFAULT))
 @click.pass_context
@@ -69,24 +72,32 @@ def cli(ctx, app_name, configfile, env):
 
 @cli.command(
     help='Imports a module passed on the commandline, instantiates an app by '
-         'calling imported_module.create_app() with an optional configuration '
-         'file and runs it in debug mode.'
-)
-@click.option('--debug/--no-debug', '-d/-D', default=True,
+    'calling imported_module.create_app() with an optional configuration '
+    'file and runs it in debug mode.')
+@click.option('--debug/--no-debug', '-d/-D',
+              default=True,
               help='Enabled/disable debug (enabled by default)')
-@click.option('--hostname', '-H', default='localhost',
+@click.option('--hostname', '-H',
+              default='localhost',
               help='Hostname to bind to. Defaults to localhost')
-@click.option('--port', '-p', type=int, default=5000,
+@click.option('--port', '-p',
+              type=int,
+              default=5000,
               help='Port to listen on. Defaults to 5000')
-@click.option('--ssl', '-S', flag_value='adhoc', default=None,
+@click.option('--ssl', '-S',
+              flag_value='adhoc',
+              default=None,
               help='Enable SSL with a self-signed cert')
-@click.option('--flask-debug/--no-flask-debug', '-e/-E', default=None,
+@click.option('--flask-debug/--no-flask-debug', '-e/-E',
+              default=None,
               help='Enable/disable Flask-Debug or Flask-DebugToolbar '
-                   'extensions (default: same as --debug)')
-@click.option('--extended-reload', '-R', default=2, type=float,
+              'extensions (default: same as --debug)')
+@click.option('--extended-reload', '-R',
+              default=2,
+              type=float,
               help='Seconds before restarting the app if a non-recoverable '
-                   'exception occured (e.g. SyntaxError). Set this to 0 '
-                   'to disable (default: 2.0)')
+              'exception occured (e.g. SyntaxError). Set this to 0 '
+              'to disable (default: 2.0)')
 @click.pass_obj
 def dev(obj, debug, hostname, port, ssl, flask_debug, extended_reload):
     app = obj['app']
@@ -136,8 +147,7 @@ def dev(obj, debug, hostname, port, ssl, flask_debug, extended_reload):
 
     msgs.insert(0, 'Flask-Debug: {}'.format(on_off(Debug)))
     msgs.insert(0, 'Flask-DebugToolbar: {}'.format(
-        on_off(DebugToolbarExtension))
-    )
+        on_off(DebugToolbarExtension)))
 
     if msgs:
         click.echo(' * {}'.format(', '.join(msgs)))
@@ -161,16 +171,22 @@ def dev(obj, debug, hostname, port, ssl, flask_debug, extended_reload):
                 time.sleep(extended_reload)
 
             return status
+
         ReloaderLoop.restart_with_reloader = _mp_restart
 
-    app.run(hostname, port, ssl_context=ssl, debug=debug,
+    app.run(hostname, port,
+            ssl_context=ssl,
+            debug=debug,
             extra_files=obj['extra_files'])
 
 
 @cli.command()
-@click.option('--hostname', '-H', default='0.0.0.0',
+@click.option('--hostname', '-H',
+              default='0.0.0.0',
               help='Hostname to bind to. Defaults to 0.0.0.0')
-@click.option('--port', '-p', type=int, default=80,
+@click.option('--port', '-p',
+              type=int,
+              default=80,
               help='Port to listen on. Defaults to 80')
 @click.option('--backends', '-b',
               default=server_backends.DEFAULT,
@@ -201,11 +217,12 @@ def serve(obj, hostname, port, backends):
 
 
 @cli.group()
-@click.option('--model', '-m', default='.model',
+@click.option('--model', '-m',
+              default='.model',
               help='Name of the module that contains the model')
-@click.option('--db', '-d', default='db',
-              help='SQLAlchemy instance name')
-@click.option('--echo/--no-echo', '-e/-E', default=True,
+@click.option('--db', '-d', default='db', help='SQLAlchemy instance name')
+@click.option('--echo/--no-echo', '-e/-E',
+              default=True,
               help='Overrides SQLALCHEMY_ECHO')
 @click.pass_obj
 def db(obj, model, db, echo):
@@ -243,5 +260,4 @@ def flaskdev(app):
                'To perform the same action as before, run\n\n'
                '    flask --app={} dev\n\n'
                'Note that this tool is provisional, as Flask 1.0 will likely '
-               'ship with a built-in tool of the same name.'
-               .format(app))
+               'ship with a built-in tool of the same name.'.format(app))
