@@ -32,9 +32,12 @@ APP_ENVVAR = 'FLASK_APP'
               type=click.Path(exists=True,
                               dir_okay=False),
               help='Load environment variables from file (default: "{}")'
-                   .format(ENV_DEFAULT))
+              .format(ENV_DEFAULT))
+@click.option('-m/-M', '--amend-path/--no-amend-path',
+              default=True,
+              help='Add the local directory to sys.path (default: on)')
 @click.pass_context
-def cli(ctx, app_name, configfile, env):
+def cli(ctx, app_name, configfile, env, amend_path):
     extra_files = []
     if configfile:
         extra_files.append(configfile)
@@ -56,7 +59,14 @@ def cli(ctx, app_name, configfile, env):
         click.echo('No --app parameter and FLASK_APP is not set.')
         sys.exit(1)
 
-    mod = importlib.import_module(app_name)
+    try:
+        mod = importlib.import_module(app_name)
+    except ImportError:
+        if not amend_path:
+            raise
+        sys.path.append('.')
+        mod = importlib.import_module(app_name)
+
     app = mod.create_app(configfile)
 
     obj = {}
