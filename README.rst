@@ -186,6 +186,8 @@ Backwards-incompatible changes, as they were introduced:
   syntax error is introduced to the code, the app will try to restart after two
   seconds by default, instead of crashing. This can be suppressed with the
   '--extended-reload 0' flag.
+* If the app import fails, ``flask`` will add ``.`` to ``sys.path`` and try to
+  to import once again.
 
 0.4
 ***
