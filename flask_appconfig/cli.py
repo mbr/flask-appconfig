@@ -1,6 +1,7 @@
 import os
 import sys
 import time
+import warnings
 
 import click
 
@@ -204,6 +205,8 @@ def dev(obj, debug, hostname, port, ssl, flask_debug, extended_reload):
               .format(server_backends.DEFAULT))
 @click.pass_obj
 def serve(obj, hostname, port, backends):
+    warnings.warn('flask serve is currently experimental. Use it at your '
+                  'own risk')
     app = obj['app']
 
     for backend in backends.split(','):
