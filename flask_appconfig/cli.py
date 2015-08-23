@@ -240,6 +240,9 @@ def serve(obj, hostname, port, backends):
               help='Overrides SQLALCHEMY_ECHO')
 @click.pass_obj
 def db(obj, model, db, echo):
+    warnings.warn('flask db is currently experimental. Use it at your '
+                  'own risk')
+
     model_mod = importlib.import_module(model, obj['app_mod'].__package__)
     db_obj = getattr(model_mod, db)
     obj['db'] = db_obj
