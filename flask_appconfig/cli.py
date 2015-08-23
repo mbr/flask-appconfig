@@ -200,7 +200,8 @@ def dev(obj, debug, hostname, port, ssl, flask_debug, extended_reload):
               help='Port to listen on. Defaults to 80')
 @click.option('--backends', '-b',
               default=server_backends.DEFAULT,
-              help='Comma-separated list of backends to try')
+              help='Comma-separated list of backends to try. Default: {}'
+              .format(server_backends.DEFAULT))
 @click.pass_obj
 def serve(obj, hostname, port, backends):
     app = obj['app']
