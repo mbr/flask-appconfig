@@ -247,7 +247,7 @@ def db(obj, model, db, echo):
     db_obj = getattr(model_mod, db)
     obj['db'] = db_obj
 
-    obj['app'].config['SQLALCHEMY_ECHO'] = True
+    obj['app'].config['SQLALCHEMY_ECHO'] = echo
 
     with obj['app'].app_context():
         click.echo('Connected to database: {}'.format(obj['db']))
