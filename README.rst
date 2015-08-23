@@ -188,6 +188,7 @@ Backwards-incompatible changes, as they were introduced:
   '--extended-reload 0' flag.
 * If the app import fails, ``flask`` will add ``.`` to ``sys.path`` and try to
   to import once again.
+* Experimental commands ``serve`` and ``db`` have been added.
 
 0.4
 ***
