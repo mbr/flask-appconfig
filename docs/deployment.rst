@@ -10,8 +10,8 @@ doing so, which sets the following goals:
 * Grows with the application, like Flask: Small application run almost
   instantly without much extra setup while applications that require extra
   performance are easy to configure and reuse these components.
-* Minimal moving parts: As little additional dependencies are introduced, to
-  keep the stack small and easy to manage.
+* Minimal moving parts: As few as possible additional dependencies are
+  introduced, to keep the stack small and easy to manage.
 
 .. _WSGI: http://wsgi.readthedocs.org/
 
