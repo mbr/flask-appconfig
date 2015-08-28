@@ -203,11 +203,41 @@ def dev(obj, debug, hostname, port, ssl, flask_debug, extended_reload):
               default=server_backends.DEFAULT,
               help='Comma-separated list of backends to try. Default: {}'
               .format(server_backends.DEFAULT))
+@click.option('--list', '-l', 'list_only',
+              is_flag=True,
+              help='Do not run server, but list available backends for app.')
 @click.pass_obj
-def serve(obj, hostname, port, backends):
+def serve(obj, hostname, port, backends, list_only):
     warnings.warn('flask serve is currently experimental. Use it at your '
                   'own risk')
     app = obj['app']
+
+    if list_only:
+        found = False
+
+        for backend in backends.split(','):
+            try:
+                bnd = server_backends.backends[backend]
+            except KeyError:
+                click.secho('{:20s} invalid'.format(backend), fg='red')
+                continue
+
+            info = bnd.get_info()
+
+            if info is None:
+                click.secho('{:20s} missing module'.format(backend, fg='red'))
+                continue
+
+            fmt = {}
+            if not found:
+                fmt['fg'] = 'green'
+                found = True
+
+            click.secho(
+                '{b.name:20s} {i.version:10s} {i.extra_info}'.format(b=bnd,
+                                                                     i=info),
+                **fmt)
+        return
 
     for backend in backends.split(','):
         func = getattr(server_backends, backend.replace('-', '_'), None)
