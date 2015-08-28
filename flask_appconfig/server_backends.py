@@ -1,7 +1,7 @@
 from multiprocessing import cpu_count
 import socket
 
-DEFAULT = 'meinheld,tornado,werkzeug-threaded,werkzeug'
+DEFAULT = 'tornado,meinheld,werkzeug-threaded,werkzeug'
 
 
 def _get_cpu_count():
