@@ -1,4 +1,5 @@
 import os
+import socket
 import sys
 import time
 import warnings
@@ -225,7 +226,7 @@ def serve(obj, hostname, port, backends, list_only):
             info = bnd.get_info()
 
             if info is None:
-                click.secho('{:20s} missing module'.format(backend, fg='red'))
+                click.secho('{:20s} missing module'.format(backend), fg='red')
                 continue
 
             fmt = {}
@@ -250,6 +251,15 @@ def serve(obj, hostname, port, backends, list_only):
             if func(app, hostname, port) is None:
                 continue
             break
+        except socket.error as e:
+            if not port < 1024 or e.errno != 13:
+                raise
+
+            # helpful message when trying to run on port 80 without room
+            # permissions
+            raise RuntimeError('Could not open socket on {}:{}: {}. '
+                               'Do you have root permissions?'
+                               .format(hostname, port, e))
         except RuntimeError as e:
             click.echo(str(e), err=True)
             sys.exit(1)
