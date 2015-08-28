@@ -1,7 +1,6 @@
+from collections import namedtuple
+from importlib import import_module
 from multiprocessing import cpu_count
-import socket
-
-DEFAULT = 'tornado,meinheld,werkzeug-threaded,werkzeug'
 
 
 def _get_cpu_count():
@@ -12,44 +11,88 @@ def _get_cpu_count():
                            '--instance-count supplied.')
 
 
-def werkzeug_threaded(app, hostname, port):
-    return _run_werkzeug(app, hostname, port, processes=1, threaded=False)
-
-
-def werkzeug(app, hostname, port):
-    return _run_werkzeug(app, hostname, port,
-                         processes=_get_cpu_count(),
-                         threaded=False)
-
-
-def _run_werkzeug(app, hostname, port, **kwargs):
+def _try_import(module):
     try:
-        app.run(hostname, port, debug=False, use_evalex=False, **kwargs)
-        return True
-    except socket.error as e:
-        if not port < 1024 or e.errno != 13:
-            raise
-
-        # helpful message when trying to run on port 80 without room
-        # permissions
-        raise RuntimeError('Could not open socket on {}:{}: {}. '
-                           'Do you have root permissions?'
-                           .format(hostname, port, e))
+        return import_module(module)
+    except ImportError:
+        return False
 
 
-def tornado(app, hostname, port):
-    from tornado.wsgi import WSGIContainer
-    from tornado.httpserver import HTTPServer
-    from tornado.ioloop import IOLoop
+DEFAULT = 'tornado,meinheld,werkzeug-threaded,werkzeug'
 
-    http_server = HTTPServer(WSGIContainer(app))
-    http_server.listen(port, address=hostname)
-    IOLoop.instance().start()
-    return True
+backends = {}
 
 
-def meinheld(app, hostname, port):
-    from meinheld import server
+def backend(name):
+    def _(cls):
+        backends[name] = cls
+        cls.name = name
+        return cls
 
-    server.listen((hostname, port))
-    server.run(app)
+    return _
+
+
+BackendInfo = namedtuple('BackendInfo', 'version,extra_info')
+
+
+class ServerBackend(object):
+    @classmethod
+    def get_info(cls):
+        """Return information about backend and its availability.
+
+        :return: A BackendInfo tuple if the import worked, none otherwise.
+        """
+        mod = _try_import(cls.mod_name)
+        if not mod:
+            return None
+        version = getattr(mod, '__version__', None) or getattr(mod, 'version',
+                                                               None)
+        return BackendInfo(version or 'deprecated', '')
+
+    def run_server(self, app, hostname, port):
+        raise NotImplementedError
+
+
+@backend('werkzeug')
+class WerkzeugBackend(ServerBackend):
+    processes = _get_cpu_count()
+    threaded = False
+    mod_name = 'werkzeug'
+
+    def run_server(self, app, hostname, port):
+        app.run(hostname, port,
+                debug=False,
+                use_evalex=False,
+                threaded=self.threaded,
+                processes=self.processes)
+
+
+@backend('werkzeug-threaded')
+class WerkzeugThreadedBackend(WerkzeugBackend):
+    def run_server(self, app, hostname, port):
+        return self._run(app, hostname, port, processes=1, threaded=True)
+
+
+@backend('tornado')
+class TornadoBackend(ServerBackend):
+    mod_name = 'tornado'
+
+    def run_server(self, app, hostname, port):
+        from tornado.wsgi import WSGIContainer
+        from tornado.httpserver import HTTPServer
+        from tornado.ioloop import IOLoop
+
+        http_server = HTTPServer(WSGIContainer(app))
+        http_server.listen(port, address=hostname)
+        IOLoop.instance().start()
+
+
+@backend('meinheld')
+class MeinHeldBackend(ServerBackend):
+    mod_name = 'meinheld'
+
+    def run_server(self, app, hostname, port):
+        from meinheld import server
+
+        server.listen((hostname, port))
+        server.run(app)
