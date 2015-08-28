@@ -58,6 +58,9 @@ class ServerBackend(object):
     def run_server(self, app, hostname, port):
         raise NotImplementedError
 
+    def __str__(self):
+        return '{} {}'.format(self.name, self.get_info().version)
+
 
 @backend('werkzeug')
 class WerkzeugBackend(ServerBackend):

@@ -253,10 +253,16 @@ def serve(obj, hostname, port, processes, backends, list_only):
         if not info:
             continue
 
-        click.echo('Running app using {} {} on {}:{}'.format(
-            bnd.name, info.version, hostname, port))
         b = bnd(processes)
 
+        rcfg = OrderedDict()
+        rcfg['app'] = app.name
+        rcfg['# processes'] = str(b.processes)
+        rcfg['backend'] = str(b)
+        rcfg['addr'] = '{}:{}'.format(hostname, port)
+
+        for k, v in rcfg.items():
+            click.echo('{:15s}: {}'.format(k, v))
 
         try:
             b.run_server(app, hostname, port)
