@@ -200,6 +200,10 @@ def dev(obj, debug, hostname, port, ssl, flask_debug, extended_reload):
               type=int,
               default=80,
               help='Port to listen on. Defaults to 80')
+@click.option('--processes', '-w',
+              type=int,
+              help='When possible, run this many instances in separate '
+              'processes. Defaults to #CPUs.')
 @click.option('--backends', '-b',
               default=server_backends.DEFAULT,
               help='Comma-separated list of backends to try. Default: {}'
@@ -208,7 +212,7 @@ def dev(obj, debug, hostname, port, ssl, flask_debug, extended_reload):
               is_flag=True,
               help='Do not run server, but list available backends for app.')
 @click.pass_obj
-def serve(obj, hostname, port, backends, list_only):
+def serve(obj, hostname, port, processes, backends, list_only):
     click.secho('flask serve is currently experimental. Use it at your '
                 'own risk',
                 fg='yellow',
@@ -251,9 +255,11 @@ def serve(obj, hostname, port, backends, list_only):
 
         click.echo('Running app using {} {} on {}:{}'.format(
             bnd.name, info.version, hostname, port))
+        b = bnd(processes)
+
 
         try:
-            bnd().run_server(app, hostname, port)
+            b.run_server(app, hostname, port)
         except socket.error as e:
             if not port < 1024 or e.errno != 13:
                 raise

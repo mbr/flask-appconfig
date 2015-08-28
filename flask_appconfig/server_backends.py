@@ -36,6 +36,12 @@ BackendInfo = namedtuple('BackendInfo', 'version,extra_info')
 
 
 class ServerBackend(object):
+    def __init__(self, processes=None):
+        if not hasattr(self, 'processes'):
+            if processes is None:
+                processes = _get_cpu_count()
+            self.processes = processes
+
     @classmethod
     def get_info(cls):
         """Return information about backend and its availability.
@@ -55,7 +61,6 @@ class ServerBackend(object):
 
 @backend('werkzeug')
 class WerkzeugBackend(ServerBackend):
-    processes = _get_cpu_count()
     threaded = False
     mod_name = 'werkzeug'
 
@@ -65,12 +70,6 @@ class WerkzeugBackend(ServerBackend):
                 use_evalex=False,
                 threaded=self.threaded,
                 processes=self.processes)
-
-
-@backend('werkzeug-threaded')
-class WerkzeugThreadedBackend(WerkzeugBackend):
-    def run_server(self, app, hostname, port):
-        return self._run(app, hostname, port, processes=1, threaded=True)
 
 
 @backend('tornado')
