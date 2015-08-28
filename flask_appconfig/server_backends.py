@@ -36,6 +36,8 @@ BackendInfo = namedtuple('BackendInfo', 'version,extra_info')
 
 
 class ServerBackend(object):
+    vulnerable = True
+
     def __init__(self, processes=None):
         if not hasattr(self, 'processes'):
             if processes is None:
