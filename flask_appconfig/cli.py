@@ -1,8 +1,8 @@
+from collections import OrderedDict
 import os
 import socket
 import sys
 import time
-import warnings
 
 import click
 
@@ -209,8 +209,10 @@ def dev(obj, debug, hostname, port, ssl, flask_debug, extended_reload):
               help='Do not run server, but list available backends for app.')
 @click.pass_obj
 def serve(obj, hostname, port, backends, list_only):
-    warnings.warn('flask serve is currently experimental. Use it at your '
-                  'own risk')
+    click.secho('flask serve is currently experimental. Use it at your '
+                'own risk',
+                fg='yellow',
+                err=True)
     app = obj['app']
 
     if list_only:
@@ -281,8 +283,10 @@ def serve(obj, hostname, port, backends, list_only):
               help='Overrides SQLALCHEMY_ECHO')
 @click.pass_obj
 def db(obj, model, db, echo):
-    warnings.warn('flask db is currently experimental. Use it at your '
-                  'own risk')
+    click.secho('flask db is currently experimental. Use it at your '
+                'own risk',
+                fg='yellow',
+                err=True)
 
     model_mod = importlib.import_module(model, obj['app_mod'].__package__)
     db_obj = getattr(model_mod, db)
