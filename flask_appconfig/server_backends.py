@@ -1,8 +1,7 @@
 from multiprocessing import cpu_count
 import socket
 
-
-DEFAULT = 'tornado,werkzeug-threaded,werkzeug'
+DEFAULT = 'meinheld,tornado,werkzeug-threaded,werkzeug'
 
 
 def _get_cpu_count():
@@ -18,7 +17,8 @@ def werkzeug_threaded(app, hostname, port):
 
 
 def werkzeug(app, hostname, port):
-    return _run_werkzeug(app, hostname, port, processes=_get_cpu_count(),
+    return _run_werkzeug(app, hostname, port,
+                         processes=_get_cpu_count(),
                          threaded=False)
 
 
@@ -46,3 +46,10 @@ def tornado(app, hostname, port):
     http_server.listen(port, address=hostname)
     IOLoop.instance().start()
     return True
+
+
+def meinheld(app, hostname, port):
+    from meinheld import server
+
+    server.listen((hostname, port))
+    server.run(app)
