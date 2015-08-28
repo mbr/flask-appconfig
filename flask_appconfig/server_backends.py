@@ -77,6 +77,12 @@ class WerkzeugBackend(ServerBackend):
                 processes=self.processes)
 
 
+@backend('werkzeug-threaded')
+class WerkzeugThreaded(WerkzeugBackend):
+    threaded = True
+    processes = 1
+
+
 @backend('tornado')
 class TornadoBackend(ServerBackend):
     mod_name = 'tornado'
