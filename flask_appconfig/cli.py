@@ -240,17 +240,18 @@ def serve(obj, hostname, port, backends, list_only):
                 **fmt)
         return
 
+    # regular operation
     for backend in backends.split(','):
-        func = getattr(server_backends, backend.replace('-', '_'), None)
-        if not callable(func):
-            click.echo('Not a valid backend: {}'.format(backend))
+        bnd = server_backends.backends[backend]
+        info = bnd.get_info()
+        if not info:
             continue
-        click.echo('Trying backend {}'.format(backend))
+
+        click.echo('Running app using {} {} on {}:{}'.format(
+            bnd.name, info.version, hostname, port))
 
         try:
-            if func(app, hostname, port) is None:
-                continue
-            break
+            bnd().run_server(app, hostname, port)
         except socket.error as e:
             if not port < 1024 or e.errno != 13:
                 raise
