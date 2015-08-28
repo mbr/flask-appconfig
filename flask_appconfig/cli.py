@@ -276,14 +276,13 @@ def serve(obj, hostname, port, processes, backends, list_only):
 
             # helpful message when trying to run on port 80 without room
             # permissions
-            raise RuntimeError('Could not open socket on {}:{}: {}. '
-                               'Do you have root permissions?'
-                               .format(hostname, port, e))
+            click.echo('Could not open socket on {}:{}: {}. '
+                       'Do you have root permissions?'
+                       .format(hostname, port, e))
+            sys.exit(13)
         except RuntimeError as e:
             click.echo(str(e), err=True)
             sys.exit(1)
-        except ImportError:
-            continue
     else:
         click.echo('Exhausted list of possible backends', err=True)
         sys.exit(1)
