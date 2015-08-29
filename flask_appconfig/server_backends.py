@@ -18,7 +18,7 @@ def _try_import(module):
         return False
 
 
-DEFAULT = 'tornado,meinheld,werkzeug-threaded,werkzeug'
+DEFAULT = 'tornado,meinheld,gunicorn,werkzeug-threaded,werkzeug'
 
 backends = {}
 
@@ -95,6 +95,29 @@ class TornadoBackend(ServerBackend):
         http_server = HTTPServer(WSGIContainer(app))
         http_server.listen(port, address=hostname)
         IOLoop.instance().start()
+
+
+@backend('gunicorn')
+class GUnicornBackend(ServerBackend):
+    mod_name = 'gunicorn'
+
+    def run_server(self, app, hostname, port):
+        import gunicorn.app.base
+
+        class FlaskGUnicornApp(gunicorn.app.base.BaseApplication):
+            options = {
+                'bind': '{}:{}'.format(hostname, port),
+                'workers': self.processes
+            }
+
+            def load_config(self):
+                for k, v in self.options.items():
+                    self.cfg.set(k.lower(), v)
+
+            def load(self):
+                return app
+
+        FlaskGUnicornApp().run()
 
 
 @backend('meinheld')
