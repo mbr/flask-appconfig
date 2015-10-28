@@ -7,6 +7,7 @@ import time
 import click
 
 from . import server_backends
+from .middleware import ReverseProxied
 from .util import honcho_parse_env
 
 try:
@@ -212,8 +213,14 @@ def dev(obj, debug, hostname, port, ssl, flask_debug, extended_reload):
 @click.option('--list', '-l', 'list_only',
               is_flag=True,
               help='Do not run server, but list available backends for app.')
+@click.option('--reverse-proxied',
+              is_flag=True,
+              help='Enable HTTP-reverse proxy middleware. Do not activate '
+              'this unless you need it, it becomes a security risks when used '
+              'incorrectly.')
 @click.pass_obj
-def serve(obj, hostname, port, processes, backends, list_only):
+def serve(obj, hostname, port, processes, backends, list_only,
+          reverse_proxied):
     if processes <= 0:
         processes = None
 
@@ -222,6 +229,10 @@ def serve(obj, hostname, port, processes, backends, list_only):
                 fg='yellow',
                 err=True)
     app = obj['app']
+    wsgi_app = app
+
+    if reverse_proxied:
+        wsgi_app = ReverseProxied(app)
 
     if list_only:
         found = False
@@ -269,7 +280,7 @@ def serve(obj, hostname, port, processes, backends, list_only):
             click.echo('{:15s}: {}'.format(k, v))
 
         try:
-            b.run_server(app, hostname, port)
+            b.run_server(wsgi_app, hostname, port)
         except socket.error as e:
             if not port < 1024 or e.errno != 13:
                 raise
