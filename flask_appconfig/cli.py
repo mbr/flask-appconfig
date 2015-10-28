@@ -22,21 +22,26 @@ APP_ENVVAR = 'FLASK_APP'
 
 
 @click.group(invoke_without_command=True)
-@click.option('--app', '-a', 'app_name',
+@click.option('--app',
+              '-a',
+              'app_name',
               envvar=APP_ENVVAR,
               help='App to import')
-@click.option('--configfile', '-c',
+@click.option('--configfile',
+              '-c',
               type=click.Path(exists=True,
                               dir_okay=False),
               help='Configuration file to pass as the first parameter to '
               'create_app')
-@click.option('--env', '-e',
+@click.option('--env',
+              '-e',
               default=None,
               type=click.Path(exists=True,
                               dir_okay=False),
               help='Load environment variables from file (default: "{}")'
               .format(ENV_DEFAULT))
-@click.option('-m/-M', '--amend-path/--no-amend-path',
+@click.option('-m/-M',
+              '--amend-path/--no-amend-path',
               default=True,
               help='Add the local directory to sys.path (default: on)')
 @click.pass_context
@@ -87,25 +92,31 @@ def cli(ctx, app_name, configfile, env, amend_path):
     help='Imports a module passed on the commandline, instantiates an app by '
     'calling imported_module.create_app() with an optional configuration '
     'file and runs it in debug mode.')
-@click.option('--debug/--no-debug', '-d/-D',
+@click.option('--debug/--no-debug',
+              '-d/-D',
               default=True,
               help='Enabled/disable debug (enabled by default)')
-@click.option('--hostname', '-H',
+@click.option('--hostname',
+              '-H',
               default='localhost',
               help='Hostname to bind to. Defaults to localhost')
-@click.option('--port', '-p',
+@click.option('--port',
+              '-p',
               type=int,
               default=5000,
               help='Port to listen on. Defaults to 5000')
-@click.option('--ssl', '-S',
+@click.option('--ssl',
+              '-S',
               flag_value='adhoc',
               default=None,
               help='Enable SSL with a self-signed cert')
-@click.option('--flask-debug/--no-flask-debug', '-e/-E',
+@click.option('--flask-debug/--no-flask-debug',
+              '-e/-E',
               default=None,
               help='Enable/disable Flask-Debug or Flask-DebugToolbar '
               'extensions (default: same as --debug)')
-@click.option('--extended-reload', '-R',
+@click.option('--extended-reload',
+              '-R',
               default=2,
               type=float,
               help='Seconds before restarting the app if a non-recoverable '
@@ -187,30 +198,37 @@ def dev(obj, debug, hostname, port, ssl, flask_debug, extended_reload):
 
         ReloaderLoop.restart_with_reloader = _mp_restart
 
-    app.run(hostname, port,
+    app.run(hostname,
+            port,
             ssl_context=ssl,
             debug=debug,
             extra_files=obj['extra_files'])
 
 
 @cli.command()
-@click.option('--hostname', '-H',
+@click.option('--hostname',
+              '-H',
               default='0.0.0.0',
               help='Hostname to bind to. Defaults to 0.0.0.0')
-@click.option('--port', '-p',
+@click.option('--port',
+              '-p',
               type=int,
               default=80,
               help='Port to listen on. Defaults to 80')
-@click.option('--processes', '-w',
+@click.option('--processes',
+              '-w',
               type=int,
               default=0,
               help='When possible, run this many instances in separate '
               'processes. 0 means determine automatically. Default: 1')
-@click.option('--backends', '-b',
+@click.option('--backends',
+              '-b',
               default=server_backends.DEFAULT,
               help='Comma-separated list of backends to try. Default: {}'
               .format(server_backends.DEFAULT))
-@click.option('--list', '-l', 'list_only',
+@click.option('--list',
+              '-l',
+              'list_only',
               is_flag=True,
               help='Do not run server, but list available backends for app.')
 @click.option('--reverse-proxied',
@@ -300,11 +318,13 @@ def serve(obj, hostname, port, processes, backends, list_only,
 
 
 @cli.group()
-@click.option('--model', '-m',
+@click.option('--model',
+              '-m',
               default='.model',
               help='Name of the module that contains the model')
 @click.option('--db', '-d', default='db', help='SQLAlchemy instance name')
-@click.option('--echo/--no-echo', '-e/-E',
+@click.option('--echo/--no-echo',
+              '-e/-E',
               default=True,
               help='Overrides SQLALCHEMY_ECHO')
 @click.pass_obj
