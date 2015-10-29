@@ -200,8 +200,8 @@ def register_cli(cli):
                     found = True
 
                 click.secho(
-                    '{b.name:20s} {i.version:10s} {i.extra_info}'.format(b=bnd,
-                                                                         i=info),
+                    '{b.name:20s} {i.version:10s} {i.extra_info}'.format(
+                        b=bnd, i=info),
                     **fmt)
             return
 
