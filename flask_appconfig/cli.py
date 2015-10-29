@@ -9,14 +9,9 @@ from flask import current_app
 
 from . import server_backends
 from .middleware import ReverseProxied
-from .util import honcho_parse_env
 
 ENV_DEFAULT = '.env'
 APP_ENVVAR = 'FLASK_APP'
-
-
-def cli():
-    print('hello')
 
 
 def register_cli(cli):
