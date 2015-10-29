@@ -182,6 +182,8 @@ Backwards-incompatible changes, as they were introduced:
 0.12
 ****
 * The ``configfile``-parameter has been deprecated.
+* Auto-discovery has been removed, pending decision on
+  https://github.com/mitsuhiko/flask/pull/1536
 
 0.11
 ****
