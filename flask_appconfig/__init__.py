@@ -10,9 +10,14 @@ class AppConfig(object):
         if app:
             self.init_app(app, *args, **kwargs)
 
-    def init_app(self, app,
-                 configfile=None, envvar=True, default_settings=True,
-                 from_envvars='json', from_envvars_prefix=None):
+    def init_app(self,
+                 app,
+                 configfile=None,
+                 envvar=True,
+                 default_settings=True,
+                 from_envvars='json',
+                 from_envvars_prefix=None,
+                 enable_cli=True):
 
         if from_envvars_prefix is None:
             from_envvars_prefix = app.name.upper() + '_'
@@ -39,12 +44,29 @@ class AppConfig(object):
 
         # load environment variables
         if from_envvars:
-            env.from_envvars(app.config, from_envvars_prefix,
+            env.from_envvars(app.config,
+                             from_envvars_prefix,
                              as_json=('json' == from_envvars))
 
         # register extension
         app.extensions = getattr(app, 'extensions', {})
         app.extensions['appconfig'] = self
+
+        # register command-line functions if available
+        if enable_cli and not hasattr(app, 'cli'):
+            try:
+                import flask_cli
+            except ImportError:
+                pass
+            else:
+                # auto-load flask-cli if installed
+                flask_cli.FlaskCLI(app)
+
+        if enable_cli and hasattr(app, 'cli'):
+            from .cli import register_cli
+            register_cli(app.cli)
+
+        return app
 
 
 class HerokuConfig(AppConfig):
