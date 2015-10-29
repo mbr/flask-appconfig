@@ -146,7 +146,7 @@ def register_cli(cli):
     @click.option('--processes',
                   '-w',
                   type=int,
-                  default=0,
+                  default=1,
                   help='When possible, run this many instances in separate '
                   'processes. 0 means determine automatically. Default: 1')
     @click.option('--backends',
