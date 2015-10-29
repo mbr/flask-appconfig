@@ -61,7 +61,7 @@ class AppConfig(object):
         if enable_cli:
             cli_mod = try_import('flask_cli', 'flask.cli')
 
-            if hasattr(cli_mod, 'FlaskCLI'):
+            if hasattr(cli_mod, 'FlaskCLI') and not hasattr(app, 'cli'):
                 # auto-load flask-cli if installed
                 cli_mod.FlaskCLI(app)
 
