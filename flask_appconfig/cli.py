@@ -47,6 +47,10 @@ def register_cli(cli):
     def dev(host, port, ssl, flask_debug, extended_reload):
         # FIXME: support all options of ``flask run``
         app = current_app
+
+        if not app.debug:
+            click.echo(' * app.debug = True')
+            app.debug = True  # conveniently force debug mode
         extra_files = []
 
         # add configuration file to extra_files if passed in
@@ -161,9 +165,7 @@ def register_cli(cli):
         help='Enable HTTP-reverse proxy middleware. Do not activate '
         'this unless you need it, it becomes a security risks when used '
         'incorrectly.')
-    @click.pass_obj
-    def serve(obj, host, port, processes, backends, list_only,
-              reverse_proxied):
+    def serve(host, port, processes, backends, list_only, reverse_proxied):
         if processes <= 0:
             processes = None
 
@@ -172,6 +174,10 @@ def register_cli(cli):
                     fg='yellow',
                     err=True)
         app = current_app
+
+        # we NEVER allow debug mode in production
+        app.debug = False
+
         wsgi_app = app
 
         if reverse_proxied:
