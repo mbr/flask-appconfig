@@ -21,7 +21,7 @@ setup(
     url='http://github.com/mbr/flask-appconfig',
     license='MIT',
     packages=find_packages(exclude=['tests']),
-    install_requires=['flask<1.0', 'flask-cli', 'six', 'click'],
+    install_requires=['flask', 'six', 'click'],
     classifiers=[
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 3',
