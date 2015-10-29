@@ -51,7 +51,7 @@ class ServerBackend(object):
                                                                None)
         return BackendInfo(version or 'deprecated', '')
 
-    def run_server(self, app, hostname, port):
+    def run_server(self, app, host, port):
         raise NotImplementedError
 
     def __str__(self):
@@ -63,8 +63,9 @@ class WerkzeugBackend(ServerBackend):
     threaded = False
     mod_name = 'werkzeug'
 
-    def run_server(self, app, hostname, port):
-        app.run(hostname, port,
+    def run_server(self, app, host, port):
+        app.run(host,
+                port,
                 debug=False,
                 use_evalex=False,
                 threaded=self.threaded,
@@ -81,13 +82,13 @@ class WerkzeugThreaded(WerkzeugBackend):
 class TornadoBackend(ServerBackend):
     mod_name = 'tornado'
 
-    def run_server(self, app, hostname, port):
+    def run_server(self, app, host, port):
         from tornado.wsgi import WSGIContainer
         from tornado.httpserver import HTTPServer
         from tornado.ioloop import IOLoop
 
         http_server = HTTPServer(WSGIContainer(app))
-        http_server.listen(port, address=hostname)
+        http_server.listen(port, address=host)
         IOLoop.instance().start()
 
 
@@ -95,12 +96,12 @@ class TornadoBackend(ServerBackend):
 class GUnicornBackend(ServerBackend):
     mod_name = 'gunicorn'
 
-    def run_server(self, app, hostname, port):
+    def run_server(self, app, host, port):
         import gunicorn.app.base
 
         class FlaskGUnicornApp(gunicorn.app.base.BaseApplication):
             options = {
-                'bind': '{}:{}'.format(hostname, port),
+                'bind': '{}:{}'.format(host, port),
                 'workers': self.processes
             }
 
@@ -118,8 +119,8 @@ class GUnicornBackend(ServerBackend):
 class MeinHeldBackend(ServerBackend):
     mod_name = 'meinheld'
 
-    def run_server(self, app, hostname, port):
+    def run_server(self, app, host, port):
         from meinheld import server
 
-        server.listen((hostname, port))
+        server.listen((host, port))
         server.run(app)
