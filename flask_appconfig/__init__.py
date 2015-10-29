@@ -35,7 +35,7 @@ class AppConfig(object):
         # load supplied configuration file
         if configfile is not None:
             warnings.warn('The configfile-parameter is deprecated and will '
-                          'be removed (it is currently ignored. If you are '
+                          'be removed (it is currently ignored). If you are '
                           'trying to load a configuration file, use the '
                           '_CONFIG envvar instead. During tests, simply '
                           'populate app.config before or after AppConfig.',

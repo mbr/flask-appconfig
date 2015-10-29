@@ -179,6 +179,10 @@ Changelog
 
 Backwards-incompatible changes, as they were introduced:
 
+0.12
+****
+* The ``configfile``-parameter has been deprecated.
+
 0.11
 ****
 * The ``flaskdev`` tool has been replaced with ``flask``.
