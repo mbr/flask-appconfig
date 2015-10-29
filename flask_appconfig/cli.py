@@ -128,7 +128,7 @@ def register_cli(cli):
 
         app.run(host, port, ssl_context=ssl, extra_files=extra_files)
 
-    @cli.command()
+    @cli.command(help='Runs a production server.')
     @click.option('--host',
                   '-H',
                   default='0.0.0.0',
