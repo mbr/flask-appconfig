@@ -250,37 +250,34 @@ def register_cli(cli):
             sys.exit(1)
 
 
-def register_db_cli():
+def register_db_cli(cli, cli_mod):
     # FIXME: currently disabled
-    @cli.group()
-    @click.option('--model',
-                  '-m',
-                  default='.model',
-                  help='Name of the module that contains the model')
-    @click.option('--db', '-d', default='db', help='SQLAlchemy instance name')
+    @cli.group(help='Flask-SQLAlchemy functions')
     @click.option('--echo/--no-echo',
                   '-e/-E',
-                  default=True,
+                  default=None,
                   help='Overrides SQLALCHEMY_ECHO')
-    def db(model, db, echo):
+    @cli_mod.with_appcontext
+    def db(echo):
         # FIXME: currently broken.
         click.secho('flask db is currently experimental. Use it at your '
                     'own risk',
                     fg='yellow',
                     err=True)
 
-        model_mod = importlib.import_module(model, obj['app_mod'].__package__)
-        db_obj = getattr(model_mod, db)
-        obj['db'] = db_obj
+        # sanity check
+        if 'sqlalchemy' not in current_app.extensions:
+            click.secho('No SQLAlchemy extension loaded. Did you initialize '
+                        'your app?',
+                        fg='red',
+                        err=True)
+            sys.exit(1)
 
-        obj['app'].config['SQLALCHEMY_ECHO'] = echo
+        if echo is not None:
+            current_app.config['SQLALCHEMY_ECHO'] = echo
 
-        with obj['app'].app_context():
-            click.echo('Connected to database: {}'.format(obj['db']))
-
-    @db.command()
+    @db.command(help='Drop and recreated schema')
     def reset():
-        with obj['app'].app_context():
-            click.echo('Resetting database')
-            db.drop_all()
-            db.create_all()
+        db = current_app.extensions['sqlalchemy'].db
+        db.drop_all()
+        db.create_all()
