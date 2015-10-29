@@ -231,6 +231,7 @@ def register_cli(cli):
 
             try:
                 b.run_server(wsgi_app, host, port)
+                sys.exit(0)  # if the server exits normally, just quit
             except socket.error as e:
                 if not port < 1024 or e.errno != 13:
                     raise
