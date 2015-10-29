@@ -242,6 +242,9 @@ def register_cli(cli):
             click.echo('Exhausted list of possible backends', err=True)
             sys.exit(1)
 
+
+def register_db_cli():
+    # FIXME: currently disabled
     @cli.group()
     @click.option('--model',
                   '-m',
@@ -252,8 +255,8 @@ def register_cli(cli):
                   '-e/-E',
                   default=True,
                   help='Overrides SQLALCHEMY_ECHO')
-    @click.pass_obj
-    def db(obj, model, db, echo):
+    def db(model, db, echo):
+        # FIXME: currently broken.
         click.secho('flask db is currently experimental. Use it at your '
                     'own risk',
                     fg='yellow',
@@ -269,10 +272,7 @@ def register_cli(cli):
             click.echo('Connected to database: {}'.format(obj['db']))
 
     @db.command()
-    @click.pass_obj
-    def reset(obj):
-        db = obj['db']
-
+    def reset():
         with obj['app'].app_context():
             click.echo('Resetting database')
             db.drop_all()
