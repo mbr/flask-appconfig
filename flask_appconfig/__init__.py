@@ -59,27 +59,29 @@ class AppConfig(object):
         app.extensions['appconfig'] = self
 
         # register command-line functions if available
-        if enable_cli and not hasattr(app, 'cli'):
+        if enable_cli:
             try:
                 import flask_cli as cli_mod
             except ImportError:
-                pass
+                try:
+                    import flask.cli as cli_mod
+                except ImportError:
+                    cli_mod = None
             else:
                 # auto-load flask-cli if installed
                 cli_mod.FlaskCLI(app)
 
-        if enable_cli and hasattr(app, 'cli'):
-            import flask.cli as cli_mod
-            from .cli import register_cli, register_db_cli
-            register_cli(app.cli)
+            if hasattr(app, 'cli'):
+                from .cli import register_cli, register_db_cli
+                register_cli(app.cli)
 
-            # conditionally register db api
-            try:
-                import flask_sqlalchemy
-            except ImportError:
-                pass
-            else:
-                register_db_cli(app.cli, cli_mod)
+                # conditionally register db api
+                try:
+                    import flask_sqlalchemy
+                except ImportError:
+                    pass
+                else:
+                    register_db_cli(app.cli, cli_mod)
 
         return app
 
