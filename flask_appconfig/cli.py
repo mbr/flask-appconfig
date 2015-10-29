@@ -171,7 +171,7 @@ def register_cli(cli):
                     'own risk',
                     fg='yellow',
                     err=True)
-        app = obj['app']
+        app = current_app
         wsgi_app = app
 
         if reverse_proxied:
