@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import os
+import warnings
 
 from . import env, heroku
 
@@ -32,8 +33,13 @@ class AppConfig(object):
             app.config.from_object(default_settings)
 
         # load supplied configuration file
-        if configfile:
-            app.config.from_pyfile(configfile)
+        if configfile is not None:
+            warnings.warn('The configfile-parameter is deprecated and will '
+                          'be removed (it is currently ignored. If you are '
+                          'trying to load a configuration file, use the '
+                          '_CONFIG envvar instead. During tests, simply '
+                          'populate app.config before or after AppConfig.',
+                          DeprecationWarning)
 
         # load configuration file from environment
         if envvar is True:
