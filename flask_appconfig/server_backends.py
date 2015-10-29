@@ -1,6 +1,7 @@
 from collections import namedtuple
-from importlib import import_module
 from multiprocessing import cpu_count
+
+from .util import try_import
 
 
 def _get_cpu_count():
@@ -9,13 +10,6 @@ def _get_cpu_count():
     except NotImplementedError:
         raise RuntimeError('Could not determine CPU count and no '
                            '--instance-count supplied.')
-
-
-def _try_import(module):
-    try:
-        return import_module(module)
-    except ImportError:
-        return False
 
 
 DEFAULT = 'tornado,meinheld,gunicorn,werkzeug-threaded,werkzeug'
@@ -50,7 +44,7 @@ class ServerBackend(object):
 
         :return: A BackendInfo tuple if the import worked, none otherwise.
         """
-        mod = _try_import(cls.mod_name)
+        mod = try_import(cls.mod_name)
         if not mod:
             return None
         version = getattr(mod, '__version__', None) or getattr(mod, 'version',

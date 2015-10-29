@@ -7,3 +7,9 @@ def try_import(*module_names):
             return import_module(module_name)
         except ImportError:
             continue
+
+
+def try_import_obj(module_name, name):
+    mod = try_import(module_name)
+    if mod:
+        return getattr(mod, name, None)

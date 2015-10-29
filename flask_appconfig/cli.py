@@ -9,6 +9,7 @@ from flask import current_app
 
 from . import server_backends
 from .middleware import ReverseProxied
+from .util import try_import_obj
 
 ENV_DEFAULT = '.env'
 APP_ENVVAR = 'FLASK_APP'
@@ -64,19 +65,10 @@ def register_cli(cli):
         if flask_debug is None:
             flask_debug = app.debug
 
-        Debug = None
-        DebugToolbarExtension = None
-
         if flask_debug:
-            try:
-                from flask_debug import Debug
-            except ImportError:
-                pass
-
-            try:
-                from flask_debugtoolbar import DebugToolbarExtension
-            except ImportError:
-                pass
+            Debug = try_import_obj('flask_debug', 'Debug')
+            DebugToolbarExtension = try_import_obj('flask_debugtoolbar',
+                                                   'DebugToolbarExtension')
 
         if Debug:
             Debug(app)
