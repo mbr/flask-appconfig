@@ -27,7 +27,7 @@ def from_heroku_envvars(config):
     }
 
     # search postgresql config using regex
-    if not 'DATABASE_URL' in os.environ:
+    if 'DATABASE_URL' not in os.environ:
         for k in os.environ.keys():
             if HEROKU_POSTGRES_ENV_NAME_RE.match(k):
                 var_map[k] = 'SQLALCHEMY_DATABASE_URI'
