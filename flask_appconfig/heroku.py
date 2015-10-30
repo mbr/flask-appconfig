@@ -3,12 +3,7 @@
 import os
 import re
 import warnings
-from six import PY2
-
-if PY2:
-    from urlparse import urlparse
-else:
-    from urllib.parse import urlparse
+from six.moves.urllib_parse import urlparse
 
 from . import env
 
