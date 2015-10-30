@@ -9,6 +9,8 @@ from flask import current_app
 
 from . import server_backends
 from .middleware import ReverseProxied
+from .signals import (db_before_reset, db_reset_dropped, db_reset_created,
+                      db_after_reset)
 from .util import try_import_obj
 
 ENV_DEFAULT = '.env'
@@ -270,6 +272,17 @@ def register_db_cli(cli, cli_mod):
 
     @db.command(help='Drop and recreated schema')
     def reset():
+        app = current_app
         db = current_app.extensions['sqlalchemy'].db
-        db.drop_all()
-        db.create_all()
+
+        # start transaction
+        with db.engine.begin() as con:
+            db_before_reset.send(app, db=db, con=con)
+
+            db.drop_all()
+            db_reset_dropped.send(app, db=db, con=con)
+
+            db.create_all()
+            db_reset_created.send(app, db=db, con=con)
+
+            db_after_reset.send(app, db=db, con=con)
