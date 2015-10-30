@@ -3,7 +3,7 @@
 import os
 import warnings
 
-from . import env, heroku
+from . import env, heroku, docker
 from .util import try_import
 
 
@@ -81,3 +81,10 @@ class HerokuConfig(AppConfig):
         super(HerokuConfig, self).init_app(app, *args, **kwargs)
 
         heroku.from_heroku_envvars(app.config)
+
+
+class DockerConfig(AppConfig):
+    def init_app(self, app, *args, **kwargs):
+        super(DockerConfig, self).init_app(app, *args, **kwargs)
+
+        docker.from_docker_envvars(app.config)
