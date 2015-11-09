@@ -275,14 +275,17 @@ def register_db_cli(cli, cli_mod):
         app = current_app
         db = current_app.extensions['sqlalchemy'].db
 
-        # start transaction
-        with db.engine.begin() as con:
-            db_before_reset.send(app, db=db, con=con)
+        # FIXME: this should be in a transaction, but flask-sqlalchemy
+        # currently makes it hard to get it right.
+        #
+        # problems that occured: con is not the same as the connection used
+        # by drop_all and create_all, causing deadlocks to occur
+        db_before_reset.send(app, db=db, con=db.engine)
 
-            db.drop_all()
-            db_reset_dropped.send(app, db=db, con=con)
+        db.drop_all()
+        db_reset_dropped.send(app, db=db, con=db.engine)
 
-            db.create_all()
-            db_reset_created.send(app, db=db, con=con)
+        db.create_all()
+        db_reset_created.send(app, db=db, con=db.engine)
 
-            db_after_reset.send(app, db=db, con=con)
+        db_after_reset.send(app, db=db, con=db.engine)
