@@ -33,6 +33,9 @@ def register_cli(cli):
                   flag_value='adhoc',
                   default=None,
                   help='Enable SSL with a self-signed cert')
+    @click.option('--gen-secret-key/--no-gen-secret-key',
+                  default=True,
+                  help='Enable or disable automatic secret key generation')
     @click.option('--flask-debug/--no-flask-debug',
                   '-e/-E',
                   default=None,
@@ -47,7 +50,7 @@ def register_cli(cli):
         help='Seconds before restarting the app if a non-recoverable '
         'exception occured (e.g. SyntaxError). Set this to 0 '
         'to disable (default: 2.0)')
-    def dev(host, port, ssl, flask_debug, extended_reload):
+    def dev(host, port, ssl, gen_secret_key, flask_debug, extended_reload):
         # FIXME: support all options of ``flask run``
         app = current_app
 
@@ -55,6 +58,9 @@ def register_cli(cli):
             click.echo(' * app.debug = True')
             app.debug = True  # conveniently force debug mode
         extra_files = []
+
+        if gen_secret_key and app.config.get('SECRET_KEY', None) is None:
+            app.config['SECRET_KEY'] = os.urandom(64)
 
         # add configuration file to extra_files if passed in
         config_env_name = app.name.upper() + '_CONFIG'
