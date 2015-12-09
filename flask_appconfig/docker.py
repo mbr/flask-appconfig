@@ -22,3 +22,17 @@ def from_docker_envvars(config):
             database=os.environ.get('PG_ENV_POSTGRES_DB'))
 
         config['SQLALCHEMY_DATABASE_URI'] = uri
+
+    if 'REDIS_PORT' in os.environ:
+        redis_url = urlparse(os.environ['REDIS_PORT'])
+
+        if not redis_url.scheme == 'tcp':
+            raise ValueError('Only tcp scheme supported for redis')
+
+        host, port = pg_url.netloc.split(':')
+
+        uri = 'redis://{host}:{port}/0'.format(host=host, port=port, )
+
+        config['REDIS_URL'] = uri
+        config['REDIS_HOST'] = host
+        config['REDIS_PORT'] = int(port)
