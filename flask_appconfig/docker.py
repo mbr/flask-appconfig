@@ -29,7 +29,7 @@ def from_docker_envvars(config):
         if not redis_url.scheme == 'tcp':
             raise ValueError('Only tcp scheme supported for redis')
 
-        host, port = pg_url.netloc.split(':')
+        host, port = redis_url.netloc.split(':')
 
         uri = 'redis://{host}:{port}/0'.format(host=host, port=port, )
 
