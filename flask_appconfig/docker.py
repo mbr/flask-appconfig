@@ -19,7 +19,7 @@ def from_docker_envvars(config):
             password=os.environ.get('PG_ENV_POSTGRES_PASSWORD', ''),
             host=host,
             port=port,
-            database=os.environ.get('PG_ENV_POSTGRES_DB'))
+            database=os.environ.get('PG_ENV_POSTGRES_DB', 'postgres'))
 
         config['SQLALCHEMY_DATABASE_URI'] = uri
 
