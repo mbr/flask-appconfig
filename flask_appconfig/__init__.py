@@ -22,7 +22,7 @@ class AppConfig(object):
                  enable_cli=True):
 
         if from_envvars_prefix is None:
-            from_envvars_prefix = app.name.upper() + '_'
+            from_envvars_prefix = app.name.upper().replace('.', '_') + '_'
 
         if default_settings is True:
             defs = try_import(app.name + '.default_config')
