@@ -35,3 +35,7 @@ class ReverseProxied(object):
         if scheme:
             environ['wsgi.url_scheme'] = scheme
         return self.app(environ, start_response)
+
+    # pass through other attributes, like .run() when using werkzeug
+    def __getattr__(self, key):
+        return getattr(self.app, key)
